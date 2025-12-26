@@ -1,0 +1,2330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Football League History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root{--bg:#0a0f0d;--bg2:#111916;--bg3:#151d19;--bg4:#1a2420;--accent:#00ff87;--gold:#ffd700;--silver:#c0c0c0;--bronze:#cd7f32;--text:#fff;--text2:#8a9a91;--text3:#4a5a51;--border:#2a3a31;--danger:#ff4757;--warn:#ffa502}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+        .header{background:var(--bg2);border-bottom:1px solid var(--border);padding:1.5rem 2rem}
+        .header h1{font-family:'Oswald',sans-serif;font-size:2rem;text-transform:uppercase}
+        .header h1 span{color:var(--accent)}
+        .header p{color:var(--text2);font-size:0.9rem}
+        .nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:1rem 2rem;position:sticky;top:0;z-index:100;display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap}
+        .nav select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:0.5rem 2rem 0.5rem 1rem;color:var(--text);font-size:0.9rem;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath fill='%2300ff87' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.5rem center}
+        .nav-tabs{display:flex;gap:0.5rem;margin-left:auto}
+        .nav-tab{padding:0.5rem 1rem;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:600;text-transform:uppercase;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2)}
+        .nav-tab:hover{border-color:var(--accent);color:var(--accent)}
+        .nav-tab.active{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+        .main{max-width:1600px;margin:0 auto;padding:2rem}
+        .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-bottom:2rem}
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+        @media(max-width:1000px){.grid-2{grid-template-columns:1fr}}
+        .card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+        .card-header{padding:1rem 1.25rem;background:var(--bg4);border-bottom:1px solid var(--border);font-family:'Oswald',sans-serif;font-size:1rem;text-transform:uppercase;display:flex;align-items:center;gap:0.5rem}
+        .card-body{padding:1rem}
+        .award{text-align:center;padding:1.5rem}
+        .award.champ{border-color:var(--gold);background:linear-gradient(135deg,var(--bg3),rgba(255,215,0,0.15))}
+        .award.reg{border-color:var(--accent);background:linear-gradient(135deg,var(--bg3),rgba(0,255,135,0.1))}
+        .award.last{border-color:var(--danger);background:linear-gradient(135deg,var(--bg3),rgba(255,71,87,0.1))}
+        .award-icon{font-size:2.5rem;margin-bottom:0.5rem}
+        .award-title{font-size:0.8rem;color:var(--text3);text-transform:uppercase;margin-bottom:0.5rem}
+        .award-name{font-family:'Oswald',sans-serif;font-size:1.5rem;font-weight:700}
+        .award.champ .award-name{color:var(--gold)}
+        .award.reg .award-name{color:var(--accent)}
+        .award.last .award-name{color:var(--danger)}
+        .award-record{color:var(--text2);font-size:0.9rem}
+        .season-selectors{display:flex;gap:1rem;padding:0.75rem 2rem;background:var(--bg3);border-bottom:1px solid var(--border)}
+        .season-selectors select{background:var(--bg2);color:var(--text1);border:1px solid var(--border);padding:0.5rem 1rem;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:1rem}
+        table{width:100%;border-collapse:collapse}
+        th{padding:0.75rem 0.5rem;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;text-transform:uppercase;color:var(--text3);background:var(--bg2);border-bottom:1px solid var(--border)}
+        td{padding:0.6rem 0.5rem;border-bottom:1px solid var(--border);font-size:0.85rem}
+        tr:hover td{background:var(--bg4);cursor:pointer}
+        .rank{font-family:'Oswald',sans-serif;font-weight:700;width:30px}
+        .rank.r1{color:var(--gold)}.rank.r2{color:var(--silver)}.rank.r3{color:var(--bronze)}
+        .good{color:var(--accent)}.bad{color:var(--danger)}.warn{color:var(--warn)}
+        .record-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1rem}
+        .record-row{display:grid;grid-template-columns:30px 1fr auto;gap:0.5rem;padding:0.5rem;border-bottom:1px solid var(--border);font-size:0.8rem;align-items:center}
+        .record-row:last-child{border-bottom:none}
+        .record-row-item{transition:opacity 0.2s, background 0.2s}
+        .record-row-item.dimmed{opacity:0.3}
+        .record-row-item.highlighted{background:rgba(0,255,135,0.15);border-left:3px solid var(--accent)}
+        .current-year-badge{color:var(--accent);font-size:0.7rem;margin-left:0.25rem}
+        .record-primary{font-weight:600}
+        .record-secondary{font-size:0.7rem;color:var(--text3)}
+        .record-value{font-family:'Oswald',sans-serif;font-weight:600;color:var(--accent)}
+        .record-value.bad{color:var(--danger)}
+        .section-title{font-family:'Oswald',sans-serif;font-size:1.25rem;text-transform:uppercase;margin:2rem 0 1rem;padding-bottom:0.5rem;border-bottom:2px solid var(--accent);display:flex;align-items:center;gap:0.5rem}
+        .alltime-grid{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center}
+        .alltime-grid > .card{flex:1 1 280px;max-width:400px;min-width:280px}
+        .records-grid{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center}
+        .records-grid > .card{flex:1 1 320px;max-width:450px;min-width:320px}
+        .alltime-row{display:grid;grid-template-columns:25px 1fr auto;gap:0.5rem;padding:0.4rem 0.75rem;font-size:0.8rem;align-items:center}
+        .alltime-row:nth-child(even){background:var(--bg4)}
+        .team-header{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+        .team-header h2{font-family:'Oswald',sans-serif;font-size:1.75rem}
+        .team-stats{display:flex;gap:2rem;flex-wrap:wrap}
+        .team-stat{text-align:center}
+        .team-stat .val{font-family:'Oswald',sans-serif;font-size:1.5rem;color:var(--accent)}
+        .team-stat .lbl{font-size:0.7rem;color:var(--text3);text-transform:uppercase}
+        .week-row{display:grid;grid-template-columns:50px 1fr 80px;padding:0.6rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;align-items:center}
+        .week-row:hover{background:var(--bg4)}
+        .week-num{font-size:0.75rem;color:var(--text3)}
+        .week-result{display:inline-block;width:24px;height:24px;border-radius:4px;text-align:center;line-height:24px;font-family:'Oswald',sans-serif;font-size:0.8rem;font-weight:600;margin-right:0.5rem}
+        .week-result.W{background:var(--accent);color:var(--bg)}
+        .week-result.L{background:var(--danger);color:#fff}
+        .indicator{font-weight:bold;margin-left:0.25rem;cursor:help}
+        .indicator.chug{color:var(--danger)}
+        .indicator.lineup{color:var(--warn)}
+        .chart-container{height:300px;padding:1rem}
+        .instructions{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:600px;margin:4rem auto;text-align:center}
+        .instructions h2{font-family:'Oswald',sans-serif;margin-bottom:1rem}
+        .instructions ol{text-align:left;margin:1rem 0 1rem 1.5rem;color:var(--text2)}
+        .file-label{display:inline-block;padding:1rem 2rem;background:var(--bg4);border:1px dashed var(--border);border-radius:8px;cursor:pointer;color:var(--text2);margin-top:1rem}
+        .file-label:hover{border-color:var(--accent);color:var(--accent)}
+        input[type="file"]{display:none}
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:1000;padding:2rem}
+        .modal.show,.modal.active{display:flex}
+        .modal-content{background:var(--bg3);border:1px solid var(--border);border-radius:12px;max-width:900px;width:100%;max-height:85vh;overflow:auto}
+        .modal-header{padding:1rem;background:var(--bg4);display:flex;justify-content:space-between;align-items:center}
+        .modal-header h3{font-family:'Oswald',sans-serif}
+        .modal-close{background:none;border:none;color:var(--text2);font-size:1.5rem;cursor:pointer}
+        .modal-body{padding:1rem}
+        .clickable-row:hover{background:var(--bg4)}
+        .clickable-row:hover td{background:var(--bg4)}
+        .matchup-score{display:flex;justify-content:space-around;text-align:center;margin-bottom:1rem}
+        .matchup-team{padding:1rem}
+        .matchup-team h4{font-family:'Oswald',sans-serif;margin-bottom:0.25rem}
+        .matchup-team .score{font-family:'Oswald',sans-serif;font-size:2rem;font-weight:700}
+        .matchup-team.winner .score{color:var(--gold)}
+        .matchup-team.loser .score{color:var(--danger)}
+        .roster-list{font-size:0.85rem}
+        .roster-player{display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid var(--border)}
+        .roster-player.bench{opacity:0.5}
+        .pos-badge{display:inline-block;padding:0.1rem 0.3rem;border-radius:3px;font-size:0.65rem;font-weight:700;margin-right:0.5rem;color:#fff}
+        .pos-badge.qb{background:#e84393}.pos-badge.rb{background:#00b894}.pos-badge.wr{background:#0984e3}.pos-badge.te{background:#fdcb6e;color:#333}.pos-badge.k{background:#a29bfe}.pos-badge.d-st{background:#636e72}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1 id="title">Fantasy Football <span>League History</span></h1>
+        <p id="subtitle">Load your league data to begin</p>
+    </header>
+    <nav class="nav">
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="seasons">Seasons</button>
+            <button class="nav-tab" data-tab="biography">Biography</button>
+            <button class="nav-tab" data-tab="trades">Trade Analyzer</button>
+            <button class="nav-tab" data-tab="draft">Draft Analyzer</button>
+            <button class="nav-tab" data-tab="records">Record Book</button>
+        </div>
+    </nav>
+    <div id="seasonSelectors" class="season-selectors" style="display:none">
+        <select id="yearSelect" disabled><option>Select Year</option></select>
+        <select id="teamSelect" disabled><option>-- League Overview --</option></select>
+    </div>
+    <main class="main" id="main">
+        <div class="instructions" id="loadingArea">
+            <h2>🏈 Fantasy Football League History</h2>
+            <p style="color:var(--text2);margin-bottom:1rem" id="loadingText">Loading league data...</p>
+            <div id="manualUpload" style="display:none">
+                <p style="color:var(--text3);margin-bottom:0.5rem;font-size:0.85rem">Or upload manually:</p>
+                <label class="file-label">
+                    📁 Load league_history_data.json
+                    <input type="file" id="fileInput" accept=".json">
+                </label>
+            </div>
+        </div>
+    </main>
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Matchup</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+    <script>
+        var data = null;
+        var year = null;
+        var teamId = null;
+        var tab = 'seasons';
+        var chart = null;
+        
+        document.getElementById('fileInput').onchange = function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                try {
+                    data = JSON.parse(ev.target.result);
+                    init();
+                } catch(err) {
+                    alert('Invalid JSON file: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        };
+        
+        // Try to auto-load JSON file from same directory
+        // Tries multiple common filenames in order
+        var jsonFiles = ['league_history_data.json', 'league_history_data_v5.json', 'data.json'];
+        var fileIndex = 0;
+        
+        function tryLoadJson() {
+            if (fileIndex >= jsonFiles.length) {
+                // All attempts failed - show manual upload
+                document.getElementById('loadingText').textContent = 'Could not auto-load data file.';
+                document.getElementById('manualUpload').style.display = 'block';
+                return;
+            }
+            
+            fetch(jsonFiles[fileIndex]).then(function(r) {
+                if (r.ok) return r.json();
+                throw new Error('Not found');
+            }).then(function(d) {
+                data = d;
+                init();
+            }).catch(function() {
+                fileIndex++;
+                tryLoadJson();
+            });
+        }
+        
+        tryLoadJson();
+        
+        function init() {
+            document.getElementById('title').innerHTML = (data.league_name || 'Fantasy') + ' <span>League History</span>';
+            document.getElementById('subtitle').textContent = 'League ID: ' + data.league_id;
+            
+            var ys = document.getElementById('yearSelect');
+            ys.innerHTML = '';
+            data.available_years.forEach(function(y) {
+                var o = document.createElement('option');
+                o.value = y;
+                o.textContent = y + ' Season';
+                ys.appendChild(o);
+            });
+            ys.disabled = false;
+            ys.onchange = function() {
+                year = parseInt(ys.value);
+                loadTeams();
+                render();
+            };
+            
+            document.getElementById('teamSelect').onchange = function() {
+                teamId = this.value ? parseInt(this.value) : null;
+                render();
+            };
+            
+            document.querySelectorAll('.nav-tab').forEach(function(t) {
+                t.onclick = function() {
+                    document.querySelectorAll('.nav-tab').forEach(function(x) { x.classList.remove('active'); });
+                    t.classList.add('active');
+                    tab = t.dataset.tab;
+                    render();
+                };
+            });
+            
+            year = data.available_years[0];
+            ys.value = year;
+            loadTeams();
+            render();
+        }
+        
+        function loadTeams() {
+            var ts = document.getElementById('teamSelect');
+            ts.innerHTML = '<option value="">-- League Overview --</option>';
+            var s = data.seasons[year];
+            if (!s) return;
+            Object.values(s.teams).sort(function(a,b) { return a.display_name.localeCompare(b.display_name); }).forEach(function(t) {
+                var o = document.createElement('option');
+                o.value = t.id;
+                o.textContent = t.display_name + ' (' + t.wins + '-' + t.losses + ')';
+                ts.appendChild(o);
+            });
+            ts.disabled = false;
+            ts.value = '';
+            teamId = null;
+        }
+        
+        function render() {
+            // Show/hide season selectors based on tab
+            var selectors = document.getElementById('seasonSelectors');
+            if (tab === 'seasons') {
+                selectors.style.display = 'flex';
+            } else {
+                selectors.style.display = 'none';
+            }
+            
+            if (tab === 'records') {
+                renderRecords();
+            } else if (tab === 'trades') {
+                renderTrades();
+            } else if (tab === 'biography') {
+                renderBiography();
+            } else if (tab === 'draft') {
+                renderDraft();
+            } else if (teamId) {
+                renderTeam();
+            } else {
+                renderOverview();
+            }
+        }
+        
+        function renderOverview() {
+            var s = data.seasons[year];
+            if (!s) return;
+            var teams = Object.values(s.teams);
+            var sorted = teams.slice().sort(function(a,b) { return (a.final_standing||99)-(b.final_standing||99) || b.wins-a.wins || b.points_for-a.points_for; });
+            var byRecord = teams.slice().sort(function(a,b) { return b.wins-a.wins || b.points_for-a.points_for; });
+            var champ = s.season_status && s.season_status.is_complete ? sorted[0] : null;
+            var reg = byRecord[0];
+            var last = byRecord[byRecord.length-1];
+            var streaks = s.streaks || {top_win_streaks:[],top_loss_streaks:[]};
+            var brackets = s.brackets || {};
+            
+            var h = '<div class="grid" style="grid-template-columns:repeat(3,1fr)">';
+            h += '<div class="card award champ"><div class="award-icon">🏆</div><div class="award-title">Champion</div><div class="award-name">' + (champ ? champ.display_name : '?') + '</div><div class="award-record">' + (champ ? champ.wins+'-'+champ.losses : 'TBD') + '</div></div>';
+            h += '<div class="card award reg"><div class="award-icon">👑</div><div class="award-title">Regular Season</div><div class="award-name">' + reg.display_name + '</div><div class="award-record">' + reg.wins+'-'+reg.losses + '</div></div>';
+            h += '<div class="card award last"><div class="award-icon">🚽</div><div class="award-title">Last Place</div><div class="award-name">' + last.display_name + '</div><div class="award-record">' + last.wins+'-'+last.losses + '</div></div>';
+            h += '</div>';
+            
+            // Playoff Bracket Section
+            h += '<div class="grid-2">';
+            h += renderPlayoffBracket(brackets);
+            h += renderConsolationBracket(brackets, s.regular_season_weeks);
+            h += '</div>';
+            
+            h += '<div class="grid-2"><div class="card"><div class="card-header">🔥 Win Streaks</div><div class="card-body">';
+            streaks.top_win_streaks.forEach(function(x,i) { h += '<div style="display:flex;justify-content:space-between;padding:0.3rem 0">' + (i+1) + '. ' + x.owner + '<span class="good">' + x.streak + 'W</span></div>'; });
+            if (!streaks.top_win_streaks.length) h += '<div style="color:var(--text3)">No data</div>';
+            h += '</div></div><div class="card"><div class="card-header">💀 Loss Streaks</div><div class="card-body">';
+            streaks.top_loss_streaks.forEach(function(x,i) { h += '<div style="display:flex;justify-content:space-between;padding:0.3rem 0">' + (i+1) + '. ' + x.owner + '<span class="bad">' + x.streak + 'L</span></div>'; });
+            if (!streaks.top_loss_streaks.length) h += '<div style="color:var(--text3)">No data</div>';
+            h += '</div></div></div>';
+            
+            // UPDATED: Added PA column to standings
+            h += '<div class="grid-2"><div class="card"><div class="card-header">Final Standings</div><div class="card-body" style="padding:0;overflow-x:auto"><table><thead><tr><th>#</th><th>Team</th><th>Record</th><th>PF</th><th>PA</th><th>Acc%</th><th>Lost*</th><th>🍺</th></tr></thead><tbody>';
+            sorted.forEach(function(t,i) {
+                var rc = i<3 ? ' r'+(i+1) : '';
+                var acc = t.lineup_accuracy || 0;
+                var lost = t.games_lost_to_lineup || 0;
+                var chugs = t.total_chugs || 0;
+                h += '<tr onclick="selectTeam('+t.id+')">';
+                h += '<td class="rank'+rc+'">' + (champ ? i+1 : '?') + '</td>';
+                h += '<td><strong>' + t.display_name + '</strong></td>';
+                h += '<td>' + t.wins + '-' + t.losses + '</td>';
+                h += '<td>' + t.points_for.toFixed(1) + '</td>';
+                h += '<td>' + t.points_against.toFixed(1) + '</td>';
+                h += '<td class="' + (acc>=85?'good':acc<70?'bad':'') + '">' + acc.toFixed(1) + '%</td>';
+                h += '<td class="' + (lost>0?'bad':'good') + '">' + lost + '</td>';
+                h += '<td class="' + (chugs>5?'bad':chugs>2?'warn':'') + '">' + chugs + '</td>';
+                h += '</tr>';
+            });
+            h += '</tbody></table></div></div>';
+            h += '<div class="card"><div class="card-header">Standings Race</div><div class="chart-container"><canvas id="chart"></canvas></div></div></div>';
+            
+            document.getElementById('main').innerHTML = h;
+            renderChart(s);
+        }
+        
+        function renderPlayoffBracket(brackets) {
+            var championship = brackets.championship || {};
+            var rounds = championship.rounds || {};
+            var roundNames = brackets.round_names || {};
+            
+            var h = '<div class="card"><div class="card-header" style="background:linear-gradient(135deg,var(--bg4),rgba(255,215,0,0.2))">🏆 Playoff Bracket</div><div class="card-body">';
+            
+            if (Object.keys(rounds).length === 0) {
+                h += '<div style="color:var(--text3);text-align:center;padding:1rem">Playoffs not started</div>';
+            } else {
+                var sortedRounds = Object.keys(rounds).sort(function(a,b) { return parseInt(a) - parseInt(b); });
+                sortedRounds.forEach(function(roundNum) {
+                    var roundInt = parseInt(roundNum);
+                    var roundName = roundNames[roundInt] || 'Round ' + roundNum;
+                    var matchups = rounds[roundNum];
+                    
+                    h += '<div style="margin-bottom:1rem">';
+                    h += '<div style="font-size:0.75rem;color:var(--gold);text-transform:uppercase;margin-bottom:0.5rem;font-weight:600">' + roundName + '</div>';
+                    
+                    matchups.forEach(function(m) {
+                        var home = m.home || {};
+                        var away = m.away;
+                        var homeWon = home.points > (away ? away.points : 0);
+                        var awayWon = away && away.points > home.points;
+                        
+                        h += '<div style="background:var(--bg4);border-radius:6px;padding:0.5rem;margin-bottom:0.5rem">';
+                        h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:0.25rem 0;' + (homeWon ? 'color:var(--gold)' : '') + '">';
+                        h += '<span><span style="color:var(--text3);font-size:0.7rem;margin-right:0.5rem">' + home.seed + '</span>' + home.display_name + '</span>';
+                        h += '<span style="font-family:Oswald;font-weight:600">' + (home.points ? home.points.toFixed(1) : '-') + '</span>';
+                        h += '</div>';
+                        if (away) {
+                            h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:0.25rem 0;border-top:1px solid var(--border);' + (awayWon ? 'color:var(--gold)' : '') + '">';
+                            h += '<span><span style="color:var(--text3);font-size:0.7rem;margin-right:0.5rem">' + away.seed + '</span>' + away.display_name + '</span>';
+                            h += '<span style="font-family:Oswald;font-weight:600">' + (away.points ? away.points.toFixed(1) : '-') + '</span>';
+                            h += '</div>';
+                        } else {
+                            h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:0.25rem 0;border-top:1px solid var(--border);color:var(--text3)">';
+                            h += '<span>BYE</span><span>-</span>';
+                            h += '</div>';
+                        }
+                        h += '</div>';
+                    });
+                    h += '</div>';
+                });
+            }
+            
+            h += '</div></div>';
+            return h;
+        }
+        
+        function renderConsolationBracket(brackets, regSeasonWeeks) {
+            var consolation = brackets.consolation || {};
+            var weeks = consolation.weeks || {};
+            
+            var h = '<div class="card"><div class="card-header" style="background:linear-gradient(135deg,var(--bg4),rgba(255,71,87,0.15))">📋 Consolation Bracket</div><div class="card-body">';
+            
+            if (Object.keys(weeks).length === 0) {
+                h += '<div style="color:var(--text3);text-align:center;padding:1rem">Consolation games not started</div>';
+            } else {
+                var sortedWeeks = Object.keys(weeks).sort(function(a,b) { return parseInt(a) - parseInt(b); });
+                sortedWeeks.forEach(function(weekNum) {
+                    var matchups = weeks[weekNum];
+                    
+                    h += '<div style="margin-bottom:1rem">';
+                    h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase;margin-bottom:0.5rem;font-weight:600">Week ' + weekNum + '</div>';
+                    
+                    matchups.forEach(function(m) {
+                        var home = m.home || {};
+                        var away = m.away;
+                        var homeWon = home.points > (away ? away.points : 0);
+                        var awayWon = away && away.points > home.points;
+                        
+                        h += '<div style="background:var(--bg4);border-radius:6px;padding:0.5rem;margin-bottom:0.5rem">';
+                        h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:0.25rem 0;' + (homeWon ? 'color:var(--accent)' : '') + '">';
+                        h += '<span><span style="color:var(--text3);font-size:0.7rem;margin-right:0.5rem">' + home.seed + '</span>' + home.display_name + '</span>';
+                        h += '<span style="font-family:Oswald;font-weight:600">' + (home.points ? home.points.toFixed(1) : '-') + '</span>';
+                        h += '</div>';
+                        if (away) {
+                            h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:0.25rem 0;border-top:1px solid var(--border);' + (awayWon ? 'color:var(--accent)' : '') + '">';
+                            h += '<span><span style="color:var(--text3);font-size:0.7rem;margin-right:0.5rem">' + away.seed + '</span>' + away.display_name + '</span>';
+                            h += '<span style="font-family:Oswald;font-weight:600">' + (away.points ? away.points.toFixed(1) : '-') + '</span>';
+                            h += '</div>';
+                        }
+                        h += '</div>';
+                    });
+                    h += '</div>';
+                });
+            }
+            
+            h += '</div></div>';
+            return h;
+        }
+        
+        function renderChart(s) {
+            var ctx = document.getElementById('chart');
+            if (!ctx || !s.weekly_standings) return;
+            if (chart) chart.destroy();
+            var teams = Object.values(s.teams);
+            var colors = ['#00ff87','#ff4757','#ffa502','#0984e3','#e84393','#00b894','#fdcb6e','#a29bfe','#636e72','#fd79a8'];
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: s.weekly_standings.map(function(w) { return 'Wk'+w.week; }),
+                    datasets: teams.map(function(t,i) {
+                        return {
+                            label: t.display_name,
+                            data: s.weekly_standings.map(function(w) {
+                                var f = w.standings.find(function(x) { return x.team_id === t.id; });
+                                return f ? f.rank : null;
+                            }),
+                            borderColor: colors[i%10],
+                            backgroundColor: 'transparent',
+                            tension: 0.3,
+                            borderWidth: 2,
+                            pointRadius: 0
+                        };
+                    })
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { reverse: true, min: 1, max: teams.length, ticks: { stepSize: 1, color: '#8a9a91' }, grid: { color: '#2a3a31' } },
+                        x: { ticks: { color: '#8a9a91' }, grid: { color: '#2a3a31' } }
+                    },
+                    plugins: { legend: { position: 'bottom', labels: { color: '#8a9a91', boxWidth: 12, font: { size: 9 } } } }
+                }
+            });
+        }
+        
+        function selectTeam(id) {
+            document.getElementById('teamSelect').value = id;
+            teamId = id;
+            render();
+        }
+        
+        function renderTeam() {
+            var s = data.seasons[year];
+            var t = s.teams[teamId];
+            if (!t) return;
+            
+            var h = '<div class="team-header"><div><h2>' + t.display_name + '</h2><div style="color:var(--text2)">' + t.name + '</div></div>';
+            h += '<div class="team-stats">';
+            h += '<div class="team-stat"><div class="val">' + t.wins + '-' + t.losses + '</div><div class="lbl">Record</div></div>';
+            h += '<div class="team-stat"><div class="val">' + t.points_for.toFixed(1) + '</div><div class="lbl">Points For</div></div>';
+            h += '<div class="team-stat"><div class="val">' + t.points_against.toFixed(1) + '</div><div class="lbl">Points Against</div></div>';
+            h += '<div class="team-stat"><div class="val">' + (t.lineup_accuracy||0).toFixed(1) + '%</div><div class="lbl">Accuracy</div></div>';
+            h += '<div class="team-stat"><div class="val ' + ((t.games_lost_to_lineup||0)>0?'bad':'') + '">' + (t.games_lost_to_lineup||0) + '</div><div class="lbl">Lost*</div></div>';
+            h += '<div class="team-stat"><div class="val ' + ((t.total_chugs||0)>5?'bad':'') + '">' + (t.total_chugs||0) + '</div><div class="lbl">Chugs</div></div>';
+            h += '</div></div>';
+            
+            h += '<div class="grid-2"><div class="card"><div class="card-header">Roster</div><div class="card-body" style="padding:0;max-height:500px;overflow:auto"><table><thead><tr><th>Player</th><th>Rank</th><th>Pts</th><th>GP</th><th>Avg</th></tr></thead><tbody>';
+            (t.roster||[]).forEach(function(p) {
+                var rankDisplay = p.position_rank > 0 ? p.position + p.position_rank : '-';
+                var rankColor = p.position_rank <= 5 ? 'var(--accent)' : (p.position_rank <= 12 ? 'var(--gold)' : 'var(--text3)');
+                var gp = p.games_played || 0;
+                h += '<tr><td><span class="pos-badge ' + p.position.toLowerCase().replace('/','') + '">' + p.position + '</span>' + p.name + '</td>';
+                h += '<td style="font-family:Oswald;color:' + rankColor + '">' + rankDisplay + '</td>';
+                h += '<td class="good">' + p.total_points.toFixed(1) + '</td>';
+                h += '<td style="color:var(--text3)">' + gp + '</td>';
+                h += '<td>' + p.avg_points.toFixed(1) + '</td></tr>';
+            });
+            h += '</tbody></table></div></div>';
+            
+            h += '<div class="card"><div class="card-header">Weekly Results</div><div class="card-body" style="padding:0;max-height:500px;overflow:auto">';
+            var postseasonStarted = false;
+            var lastMatchupType = null;
+            (t.weekly_results||[]).forEach(function(w) {
+                // Check if we're entering postseason
+                if (w.is_postseason && !postseasonStarted) {
+                    postseasonStarted = true;
+                    if (w.matchup_type === 'playoff') {
+                        h += '<div style="padding:0.75rem 1rem;background:linear-gradient(135deg,var(--bg4),rgba(255,215,0,0.15));border-top:2px solid var(--gold);color:var(--gold);font-weight:600">';
+                        h += '🏆 Playoff Bracket <span style="font-size:0.8rem;font-weight:normal;opacity:0.8">(Seed #' + (t.playoff_seed || '?') + ')</span>';
+                        h += '</div>';
+                    } else if (w.matchup_type === 'consolation') {
+                        h += '<div style="padding:0.75rem 1rem;background:linear-gradient(135deg,var(--bg4),rgba(255,71,87,0.15));border-top:2px solid var(--danger);color:var(--danger);font-weight:600">';
+                        h += '📋 Consolation Bracket <span style="font-size:0.8rem;font-weight:normal;opacity:0.8">(Seed #' + (t.playoff_seed || '?') + ')</span>';
+                        h += '</div>';
+                    }
+                    lastMatchupType = w.matchup_type;
+                }
+                // Check if team was eliminated from playoffs and moved to consolation
+                else if (postseasonStarted && lastMatchupType === 'playoff' && w.matchup_type === 'consolation') {
+                    h += '<div style="padding:0.5rem 1rem;background:var(--bg4);border-top:1px solid var(--danger);color:var(--text2);font-size:0.85rem">';
+                    h += '↓ Eliminated from Playoffs';
+                    h += '</div>';
+                    lastMatchupType = w.matchup_type;
+                }
+                var chugCount = w.chugs || 0;
+                var chug = chugCount > 0 ? '<span class="indicator chug" title="'+chugCount+' chug'+(chugCount>1?'s':'')+' this week">*</span>' : '';
+                var lost = w.lost_to_lineup ? '<span class="indicator lineup" title="Lost due to lineup - optimal lineup would have won">*</span>' : '';
+                h += '<div class="week-row" onclick="showMatchup('+w.week+')">';
+                h += '<div class="week-num">Wk ' + w.week + '</div>';
+                h += '<div><span class="week-result ' + w.result + '">' + w.result + '</span>vs ' + w.opponent_owner + chug + lost + '</div>';
+                h += '<div style="text-align:right">' + w.points.toFixed(1) + ' - ' + w.opponent_points.toFixed(1) + '</div>';
+                h += '</div>';
+            });
+            h += '</div></div></div>';
+            
+            document.getElementById('main').innerHTML = h;
+        }
+        
+        function showMatchup(week) {
+            var s = data.seasons[year];
+            var matchups = s.matchups_by_week ? s.matchups_by_week[week] : null;
+            if (!matchups) { alert('No matchup data for week ' + week); return; }
+            var m = matchups.find(function(x) { return (x.home && x.home.team_id === teamId) || (x.away && x.away.team_id === teamId); });
+            if (!m) { alert('Matchup not found'); return; }
+            
+            var hw = m.home.points > (m.away ? m.away.points : 0);
+            var h = '<div class="matchup-score">';
+            h += '<div class="matchup-team ' + (hw?'winner':'loser') + '"><h4>' + m.home.display_name + '</h4><div class="score">' + m.home.points.toFixed(1) + '</div></div>';
+            h += '<div style="font-size:1.5rem;color:var(--text3)">VS</div>';
+            h += '<div class="matchup-team ' + (hw?'loser':'winner') + '"><h4>' + (m.away?m.away.display_name:'BYE') + '</h4><div class="score">' + (m.away?m.away.points.toFixed(1):'-') + '</div></div>';
+            h += '</div>';
+            
+            h += '<div class="grid-2">';
+            [m.home, m.away].forEach(function(team) {
+                if (!team) return;
+                h += '<div><h4 style="margin-bottom:0.5rem">' + team.display_name + '</h4><div class="roster-list">';
+                var starters = (team.roster||[]).filter(function(p){return p.is_starter}).sort(function(a,b){return b.points-a.points});
+                if (starters.length === 0) {
+                    h += '<div style="color:var(--text3)">No roster data available</div>';
+                } else {
+                    starters.forEach(function(p) {
+                        var slot = (p.slot||'').toUpperCase();
+                        var isSkill = ['QB','RB','WR','TE','FLEX'].indexOf(slot) !== -1;
+                        var chug = isSkill && p.points <= 0 ? ' 🍺' : '';
+                        h += '<div class="roster-player"><span><span class="pos-badge ' + p.position.toLowerCase().replace('/','') + '">' + p.position + '</span>' + p.name + chug + '</span><span style="color:' + (p.points>15?'var(--accent)':p.points<=0?'var(--danger)':'var(--text)') + '">' + p.points.toFixed(1) + '</span></div>';
+                    });
+                }
+                var bench = (team.roster||[]).filter(function(p){return !p.is_starter}).sort(function(a,b){return b.points-a.points});
+                if (bench.length) {
+                    h += '<div style="margin-top:0.5rem;color:var(--text3);font-size:0.75rem">BENCH</div>';
+                    bench.slice(0,5).forEach(function(p) {
+                        h += '<div class="roster-player bench"><span><span class="pos-badge ' + p.position.toLowerCase().replace('/','') + '">' + p.position + '</span>' + p.name + '</span><span>' + p.points.toFixed(1) + '</span></div>';
+                    });
+                }
+                h += '</div></div>';
+            });
+            h += '</div>';
+            
+            document.getElementById('modalTitle').textContent = 'Week ' + week + ' Matchup';
+            document.getElementById('modalBody').innerHTML = h;
+            document.getElementById('modal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+            document.getElementById('modal').classList.remove('active');
+        }
+        
+        document.getElementById('modal').onclick = function(e) { if (e.target.id === 'modal') closeModal(); };
+        document.onkeydown = function(e) { if (e.key === 'Escape') closeModal(); };
+        
+        function renderRecords() {
+            var r = data.records;
+            if (!r) { document.getElementById('main').innerHTML = '<p style="text-align:center;padding:2rem;color:var(--text2)">No records data. Re-run fetch_league_data_v3.py to generate records.</p>'; return; }
+            var seasonal = r.seasonal;
+            var alltime = r.all_time;
+            
+            // Get list of all managers for filter dropdown
+            var managers = [];
+            if (alltime.championships) {
+                alltime.championships.forEach(function(m) { if (managers.indexOf(m.name) === -1) managers.push(m.name); });
+            }
+            managers.sort();
+            
+            // Get most recent year and list of all years
+            var years = Object.keys(data.seasons).map(Number).sort(function(a,b){return b-a;});
+            var currentYear = years[0];
+            
+            var h = '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">';
+            h += '<div class="section-title" style="margin:0">📖 Record Book</div>';
+            h += '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">';
+            h += '<div style="display:flex;align-items:center;gap:0.5rem">';
+            h += '<label style="font-size:0.85rem;color:var(--text3)">Highlight Manager:</label>';
+            h += '<select id="managerFilter" style="background:var(--bg2);color:var(--text1);border:1px solid var(--border);padding:0.4rem 0.75rem;border-radius:4px;font-size:0.9rem">';
+            h += '<option value="">-- None --</option>';
+            managers.forEach(function(m) {
+                h += '<option value="' + m + '">' + m + '</option>';
+            });
+            h += '</select></div>';
+            h += '<div style="display:flex;align-items:center;gap:0.5rem">';
+            h += '<label style="font-size:0.85rem;color:var(--text3)">Highlight Year:</label>';
+            h += '<select id="yearFilter" style="background:var(--bg2);color:var(--text1);border:1px solid var(--border);padding:0.4rem 0.75rem;border-radius:4px;font-size:0.9rem">';
+            h += '<option value="">-- None --</option>';
+            years.forEach(function(y) {
+                h += '<option value="' + y + '">' + y + '</option>';
+            });
+            h += '</select></div>';
+            h += '</div></div>';
+            
+            // Championship History Section
+            if (seasonal.championship_games && seasonal.championship_games.length > 0) {
+                h += '<div class="section-title" style="border-color:var(--gold)">🏆 Championship History</div>';
+                h += '<div class="card" style="margin-bottom:2rem"><div class="card-body" style="padding:0"><table><thead><tr><th>Year</th><th>Champion</th><th>Runner-Up</th><th>Score</th></tr></thead><tbody>';
+                seasonal.championship_games.forEach(function(g) {
+                    var isCurrentYear = g.year == currentYear;
+                    h += '<tr class="record-row-item" data-managers="' + g.champion + ',' + g.runner_up + '" data-year="' + g.year + '">';
+                    h += '<td style="font-family:Oswald;color:var(--gold)">' + g.year + (isCurrentYear ? ' <span style="font-size:0.7rem;color:var(--accent)">★</span>' : '') + '</td>';
+                    h += '<td><strong class="manager-name">' + g.champion + '</strong></td>';
+                    h += '<td class="manager-name">' + g.runner_up + '</td>';
+                    h += '<td>' + g.champion_score.toFixed(1) + ' - ' + g.runner_up_score.toFixed(1) + '</td>';
+                    h += '</tr>';
+                });
+                h += '</tbody></table></div></div>';
+            }
+            
+            h += '<div class="section-title" style="border-color:var(--gold)">🏅 Seasonal Records</div>';
+            h += '<div class="records-grid">';
+            
+            h += recordCardWithDesc('🔥', 'Highest Team Score', 'Highest single-week team score across all matchups', seasonal.highest_team_scores, function(x){return x.manager}, function(x){return 'Wk '+x.week+', '+x.year+(x.type_label?' ('+x.type_label+')':'')+' vs '+x.opponent}, function(x){return x.value.toFixed(1)}, false, currentYear);
+            h += recordCardWithDesc('⭐', 'Highest Player Score', 'Highest single-week score by an individual player', seasonal.highest_player_scores, function(x){return x.player+' ('+x.position+')'}, function(x){return x.manager+' • Wk '+x.week+', '+x.year}, function(x){return x.value.toFixed(1)}, false, currentYear);
+            h += recordCardWithDesc('🔥', 'Highest Playoff Score', 'Highest single-week team score in playoff games', seasonal.highest_playoff_scores, function(x){return x.manager}, function(x){return 'Wk '+x.week+', '+x.year+' vs '+x.opponent}, function(x){return x.value.toFixed(1)}, false, currentYear);
+            h += recordCardWithDesc('📉', 'Lowest Team Score', 'Lowest single-week team score across all matchups', seasonal.lowest_team_scores, function(x){return x.manager}, function(x){return 'Wk '+x.week+', '+x.year+(x.type_label?' ('+x.type_label+')':'')}, function(x){return x.value.toFixed(1)}, true, currentYear);
+            h += recordCardWithDesc('🏆', 'Win Streaks', 'Longest consecutive wins in a single season', seasonal.win_streaks, function(x){return x.manager}, function(x){return x.year+' Season'}, function(x){return x.value+'W'}, false, currentYear);
+            h += recordCardWithDesc('💀', 'Loss Streaks', 'Longest consecutive losses in a single season', seasonal.loss_streaks, function(x){return x.manager}, function(x){return x.year+' Season'}, function(x){return x.value+'L'}, true, currentYear);
+            h += recordCardWithDesc('🎯', 'Closest Matchups', 'Smallest margin of victory in a matchup', seasonal.closest_matchups, function(x){return x.winner+' def. '+x.loser}, function(x){return 'Wk '+x.week+', '+x.year+(x.type_label?' ('+x.type_label+')':'')}, function(x){return x.winner_score.toFixed(1)+'-'+x.loser_score.toFixed(1)+' ('+x.value.toFixed(1)+')'}, false, currentYear);
+            h += recordCardWithDesc('💥', 'Biggest Blowouts', 'Largest margin of victory in a matchup', seasonal.biggest_blowouts, function(x){return x.winner+' def. '+x.loser}, function(x){return 'Wk '+x.week+', '+x.year+(x.type_label?' ('+x.type_label+')':'')}, function(x){return '+'+x.value.toFixed(1)}, false, currentYear);
+            h += recordCardWithDesc('🎯', 'Best Lineup Accuracy', 'Highest percentage of optimal lineup decisions', seasonal.highest_accuracy, function(x){return x.manager}, function(x){return x.year+' Season'}, function(x){return x.value.toFixed(1)+'%'}, false, currentYear);
+            h += recordCardWithDesc('😬', 'Most Games Lost to Lineup', 'Games lost where optimal lineup would have won', seasonal.most_games_lost, function(x){return x.manager}, function(x){return x.year+' Season'}, function(x){return x.value}, true, currentYear);
+            h += recordCardWithDesc('🎯', 'Highest Points Against (Season)', 'Most points scored by opponents in a season', seasonal.highest_points_against, function(x){return x.manager}, function(x){return x.year+' Season'}, function(x){return x.value.toFixed(1)}, true, currentYear);
+            if (seasonal.most_chugs_season) {
+                h += recordCardWithDesc('🍺', 'Most Chugs (Season)', 'Most starter slots with 0 or fewer points', seasonal.most_chugs_season, function(x){return x.manager}, function(x){return x.year+' Season'}, function(x){return x.value}, true, currentYear);
+            }
+            // Best Seasons (Regular Season Points)
+            if (seasonal.best_seasons) {
+                h += recordCardWithDesc('🚀', 'Best Season (Reg Pts)', 'Highest total points in regular season', seasonal.best_seasons, function(x){return x.manager}, function(x){return x.year+' ('+x.record+') • '+(x.value/14).toFixed(1)+' pts/wk'}, function(x){return x.value.toFixed(1)}, false, currentYear);
+            }
+            // Best Postseasons
+            if (seasonal.best_postseasons) {
+                h += recordCardWithDesc('🏆', 'Best Postseason', 'Highest total points in postseason play', seasonal.best_postseasons, function(x){return x.manager}, function(x){return x.year+' • '+x.record+' ('+x.bracket+') • '+x.games+' games'}, function(x){return x.value.toFixed(1)}, false, currentYear);
+            }
+            // Best/Worst Draft Picks
+            if (seasonal.best_draft_picks && seasonal.best_draft_picks.length > 0) {
+                h += recordCardWithDesc('⭐', 'Best Individual Draft Picks', 'Highest FDS+ scores for individual draft selections', seasonal.best_draft_picks, function(x){return x.player_name+' ('+x.position+')'}, function(x){return x.manager+' • R'+x.round+' Pick '+x.pick_num+', '+x.year}, function(x){return '+'+(x.pick_score || 0).toFixed(1)}, false, currentYear);
+            }
+            if (seasonal.worst_draft_picks && seasonal.worst_draft_picks.length > 0) {
+                h += recordCardWithDesc('💩', 'Worst Individual Draft Picks', 'Lowest FDS+ scores for individual draft selections', seasonal.worst_draft_picks, function(x){return x.player_name+' ('+x.position+')'}, function(x){return x.manager+' • R'+x.round+' Pick '+x.pick_num+', '+x.year}, function(x){return (x.pick_score || 0).toFixed(1)}, true, currentYear);
+            }
+            h += '</div>';
+            
+            h += '<div class="section-title" style="border-color:var(--accent);margin-top:2rem">👑 All-Time Records</div>';
+            h += '<div class="alltime-grid">';
+            h += alltimeCardWithDesc('🏆 Championships', 'Total league championships won', alltime.championships, function(m){return m.championships});
+            if (alltime.championship_appearances) {
+                h += alltimeCardWithDesc('🏅 Championship Appearances', 'Times reaching the championship game', alltime.championship_appearances, function(m){return m.championship_appearances});
+            }
+            h += alltimeCardWithDesc('🎟️ Playoff Appearances', 'Seasons qualifying for the playoffs', alltime.playoff_appearances, function(m){return m.playoff_appearances});
+            h += alltimeCardWithDesc('📊 Best Overall Record', 'Cumulative win-loss record across all games', alltime.overall_record, function(m){return m.total_wins+'-'+m.total_losses+' ('+(m.win_pct*100).toFixed(1)+'%)'});
+            h += alltimeCardWithDesc('📈 Best Reg Season Record', 'Cumulative regular season win-loss record', alltime.reg_season_record, function(m){return m.reg_wins+'-'+m.reg_losses+' ('+(m.reg_win_pct*100).toFixed(1)+'%)'});
+            h += alltimeCardWithDesc('🏅 Best Playoff Record', 'Cumulative playoff game win-loss record', alltime.playoff_record, function(m){return m.playoff_wins+'-'+m.playoff_losses});
+            h += alltimeCardWithSubDesc('🏆 Best Avg Finish', 'Average final standing position (lower is better)', alltime.avg_finishing_position, function(m){return m.avg_finishing_position.toFixed(2)}, function(m){return m.seasons_played + ' seasons'});
+            if (alltime.best_avg_draft_score && alltime.best_avg_draft_score.length > 0) {
+                h += alltimeCardWithSubDesc('🎯 Best Avg Draft Score', 'Highest average FDS+ draft grade', alltime.best_avg_draft_score, function(m){return m.avg_draft_score.toFixed(1)}, function(m){return m.drafts_evaluated + ' drafts'});
+            }
+            if (alltime.most_top_drafts && alltime.most_top_drafts.length > 0) {
+                h += alltimeCardWithDesc('📈 Most Top Drafts', 'Most #1 ranked drafts in a season', alltime.most_top_drafts, function(m){return m.top_drafts});
+            }
+            if (alltime.most_worst_drafts && alltime.most_worst_drafts.length > 0) {
+                h += alltimeCardWithDesc('📉 Most Worst Drafts', 'Most last-place drafts in a season', alltime.most_worst_drafts, function(m){return m.worst_drafts}, true);
+            }
+            h += alltimeCardWithDesc('💰 Most Career Pts', 'Total fantasy points scored all-time', alltime.total_points, function(m){return m.total_points.toFixed(1)});
+            h += alltimeCardWithDesc('🎯 Most Career Pts Against', 'Total points scored by opponents all-time', alltime.most_points_against, function(m){return m.total_points_against.toFixed(1)}, true);
+            h += alltimeCardWithDesc('💰 Most Reg Season Pts', 'Total regular season points scored', alltime.reg_points, function(m){return m.reg_points.toFixed(1)});
+            h += alltimeCardWithDesc('🎯 Most Reg Season Pts Against', 'Total regular season points allowed', alltime.reg_points_against, function(m){return m.reg_points_against.toFixed(1)}, true);
+            if (alltime.postseason_points) {
+                h += alltimeCardWithDesc('🏆 Most Postseason Pts', 'Total postseason points scored', alltime.postseason_points, function(m){return m.postseason_points.toFixed(1)});
+            }
+            if (alltime.postseason_points_against) {
+                h += alltimeCardWithDesc('🎯 Most Postseason Pts Against', 'Total postseason points allowed', alltime.postseason_points_against, function(m){return m.postseason_points_against.toFixed(1)}, true);
+            }
+            h += alltimeCardWithDesc('🎯 Best Avg Accuracy', 'Highest career lineup decision accuracy', alltime.avg_accuracy, function(m){return m.avg_accuracy.toFixed(1)+'%'});
+            h += alltimeCardWithDesc('✅ Fewest Games Lost', 'Fewest games lost due to lineup mistakes', alltime.fewest_games_lost, function(m){return m.games_lost});
+            h += alltimeCardWithDesc('🍺 Most Chugs', 'Most career starter slots with 0 points', alltime.most_chugs, function(m){return m.total_chugs}, true);
+            h += '</div>';
+            
+            document.getElementById('main').innerHTML = h;
+            
+            // Add filter event listeners
+            setTimeout(function() {
+                var managerFilter = document.getElementById('managerFilter');
+                var yearFilter = document.getElementById('yearFilter');
+                
+                function applyFilters() {
+                    var selectedManager = managerFilter ? managerFilter.value : '';
+                    var selectedYear = yearFilter ? yearFilter.value : '';
+                    var rows = document.querySelectorAll('.record-row-item');
+                    
+                    rows.forEach(function(row) {
+                        var managers = row.getAttribute('data-managers') || '';
+                        var recordYear = row.getAttribute('data-year') || '';
+                        
+                        var managerMatch = !selectedManager || managers.indexOf(selectedManager) !== -1;
+                        var yearMatch = !selectedYear || recordYear === selectedYear;
+                        
+                        // Determine highlighting - if both filters set, both must match for highlight
+                        var shouldHighlight = false;
+                        var shouldDim = false;
+                        
+                        if (selectedManager && selectedYear) {
+                            // Both filters active
+                            if (managerMatch && yearMatch) {
+                                shouldHighlight = true;
+                            } else {
+                                shouldDim = true;
+                            }
+                        } else if (selectedManager) {
+                            // Only manager filter active
+                            if (managerMatch) {
+                                shouldHighlight = true;
+                            } else {
+                                shouldDim = true;
+                            }
+                        } else if (selectedYear) {
+                            // Only year filter active
+                            if (yearMatch) {
+                                shouldHighlight = true;
+                            } else {
+                                shouldDim = true;
+                            }
+                        }
+                        
+                        row.classList.toggle('highlighted', shouldHighlight);
+                        row.classList.toggle('dimmed', shouldDim);
+                    });
+                }
+                
+                if (managerFilter) {
+                    managerFilter.onchange = applyFilters;
+                }
+                if (yearFilter) {
+                    yearFilter.onchange = applyFilters;
+                }
+            }, 0);
+        }
+        
+        // Global variable for selected biography manager
+        var bioManager = null;
+        
+        function renderBiography() {
+            var bios = data.biographies;
+            if (!bios) { 
+                document.getElementById('main').innerHTML = '<p style="text-align:center;padding:2rem;color:var(--text2)">No biography data. Re-run the Python script to generate biographies.</p>'; 
+                return; 
+            }
+            
+            // Get list of managers sorted alphabetically
+            var managers = Object.keys(bios).sort();
+            
+            // If no manager selected, select first one
+            if (!bioManager || !bios[bioManager]) {
+                bioManager = managers[0];
+            }
+            
+            var bio = bios[bioManager];
+            
+            var h = '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">';
+            h += '<div class="section-title" style="margin:0">👤 Manager Biography</div>';
+            h += '<select id="bioManagerSelect" style="background:var(--bg2);color:var(--text1);border:1px solid var(--border);padding:0.5rem 1rem;border-radius:4px;font-size:1rem;font-family:Oswald">';
+            managers.forEach(function(m) {
+                h += '<option value="' + m + '"' + (m === bioManager ? ' selected' : '') + '>' + m + '</option>';
+            });
+            h += '</select></div>';
+            
+            // Manager Header Card
+            h += '<div class="card" style="background:linear-gradient(135deg,var(--bg3),var(--bg4));margin-bottom:1.5rem">';
+            h += '<div class="card-body">';
+            h += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">';
+            h += '<div>';
+            h += '<h2 style="font-family:Oswald;font-size:2rem;margin:0">' + bio.name + '</h2>';
+            h += '<div style="color:var(--text3);margin-top:0.25rem">' + bio.years_in_league + ' Years in League (' + bio.seasons[0] + ' - ' + bio.seasons[bio.seasons.length-1] + ')</div>';
+            h += '</div>';
+            h += '<div style="display:flex;gap:2rem;flex-wrap:wrap">';
+            // Championships
+            h += '<div style="text-align:center">';
+            h += '<div style="font-family:Oswald;font-size:2rem;color:var(--gold)">' + bio.championships + '</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Championships</div>';
+            if (bio.championship_years.length > 0) {
+                h += '<div style="font-size:0.7rem;color:var(--gold)">' + bio.championship_years.join(', ') + '</div>';
+            }
+            h += '</div>';
+            // Playoff Appearances
+            h += '<div style="text-align:center">';
+            h += '<div style="font-family:Oswald;font-size:2rem;color:var(--accent)">' + bio.playoff_appearances + '</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Playoff Apps</div>';
+            h += '<div style="font-size:0.7rem;color:var(--text3)">' + bio.playoff_pct + '% of seasons</div>';
+            h += '</div>';
+            // Avg Finish
+            h += '<div style="text-align:center">';
+            h += '<div style="font-family:Oswald;font-size:2rem;color:var(--text1)">' + bio.avg_finishing_position.toFixed(1) + '</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Avg Finish</div>';
+            h += '</div>';
+            h += '</div></div></div></div>';
+            
+            // Records Section
+            h += '<div class="section-title" style="border-color:var(--accent)">📊 Career Records</div>';
+            h += '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem">';
+            
+            // Total Record
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Overall Record</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem">' + bio.total_wins + '-' + bio.total_losses + '</div>';
+            h += '<div style="font-size:0.85rem;color:var(--accent)">' + bio.win_pct + '% Win Rate</div>';
+            h += '</div></div>';
+            
+            // Regular Season Record
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Regular Season</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem">' + bio.reg_wins + '-' + bio.reg_losses + '</div>';
+            h += '<div style="font-size:0.85rem;color:var(--text2)">' + bio.reg_win_pct + '% Win Rate</div>';
+            h += '</div></div>';
+            
+            // Postseason Record
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Postseason Record</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem">' + bio.playoff_wins + '-' + bio.playoff_losses + '</div>';
+            h += '<div style="font-size:0.85rem;color:var(--text2)">' + bio.playoff_win_pct + '% Win Rate</div>';
+            h += '</div></div>';
+            
+            // Total Points For
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Career Points For</div>';
+            // Calculate total games for per-week average
+            var totalGames = bio.total_wins + bio.total_losses;
+            
+            h += '<div style="font-family:Oswald;font-size:1.5rem;color:var(--accent)">' + bio.total_points.toFixed(1) + '</div>';
+            h += '<div style="font-size:0.8rem;color:var(--text2)">' + (bio.total_points / bio.years_in_league).toFixed(1) + ' pts/season</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3)">' + (totalGames > 0 ? (bio.total_points / totalGames).toFixed(1) : '0') + ' pts/game</div>';
+            h += '</div></div>';
+            
+            // Total Points Against
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Career Points Against</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem;color:var(--danger)">' + (bio.total_points_against || 0).toFixed(1) + '</div>';
+            h += '<div style="font-size:0.8rem;color:var(--text2)">' + ((bio.total_points_against || 0) / bio.years_in_league).toFixed(1) + ' pts/season</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3)">' + (totalGames > 0 ? ((bio.total_points_against || 0) / totalGames).toFixed(1) : '0') + ' pts/game</div>';
+            h += '</div></div>';
+            
+            // Easiest Opponent
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Easiest Opponent</div>';
+            if (bio.easiest_opponent) {
+                h += '<div style="font-family:Oswald;font-size:1.25rem;color:var(--accent)">' + bio.easiest_opponent.opponent + '</div>';
+                h += '<div style="font-size:0.9rem">' + bio.easiest_opponent.wins + '-' + bio.easiest_opponent.losses + '</div>';
+                h += '<div style="font-size:0.75rem;color:var(--text3)">' + bio.easiest_opponent.win_pct + '% win rate</div>';
+            } else {
+                h += '<div style="font-family:Oswald;font-size:1.25rem;color:var(--text3)">-</div>';
+            }
+            h += '</div></div>';
+            
+            // Hardest Opponent
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Hardest Opponent</div>';
+            if (bio.hardest_opponent) {
+                h += '<div style="font-family:Oswald;font-size:1.25rem;color:var(--danger)">' + bio.hardest_opponent.opponent + '</div>';
+                h += '<div style="font-size:0.9rem">' + bio.hardest_opponent.wins + '-' + bio.hardest_opponent.losses + '</div>';
+                h += '<div style="font-size:0.75rem;color:var(--text3)">' + bio.hardest_opponent.win_pct + '% win rate</div>';
+            } else {
+                h += '<div style="font-family:Oswald;font-size:1.25rem;color:var(--text3)">-</div>';
+            }
+            h += '</div></div>';
+            
+            h += '</div>';
+            
+            // Best/Worst Draft Picks Section
+            if ((bio.best_draft_picks && bio.best_draft_picks.length > 0) || (bio.worst_draft_picks && bio.worst_draft_picks.length > 0)) {
+                h += '<div class="grid-2" style="margin-bottom:1.5rem">';
+                
+                // Best Draft Picks
+                if (bio.best_draft_picks && bio.best_draft_picks.length > 0) {
+                    h += '<div class="card"><div class="card-header" style="background:linear-gradient(135deg,var(--bg4),rgba(0,255,135,0.15))">⭐ Top 3 Best Draft Picks</div>';
+                    h += '<div class="card-body" style="padding:0"><table style="font-size:0.85rem"><thead><tr>';
+                    h += '<th>Player</th><th>Year</th><th>Rd</th><th>Score</th>';
+                    h += '</tr></thead><tbody>';
+                    bio.best_draft_picks.forEach(function(pick) {
+                        var rankColor = pick.position_rank <= 5 ? 'var(--accent)' : (pick.position_rank <= 12 ? 'var(--gold)' : 'var(--text3)');
+                        h += '<tr>';
+                        h += '<td><span class="pos-badge ' + (pick.position || '').toLowerCase().replace('/', '') + '">' + (pick.position || '?') + '</span>' + pick.player_name + '</td>';
+                        h += '<td style="font-family:Oswald">' + pick.year + '</td>';
+                        h += '<td style="font-family:Oswald;text-align:center">R' + pick.round + '</td>';
+                        h += '<td style="font-family:Oswald;color:var(--accent)">+' + (pick.pick_score || 0).toFixed(1) + '</td>';
+                        h += '</tr>';
+                    });
+                    h += '</tbody></table></div></div>';
+                }
+                
+                // Worst Draft Picks
+                if (bio.worst_draft_picks && bio.worst_draft_picks.length > 0) {
+                    h += '<div class="card"><div class="card-header" style="background:linear-gradient(135deg,var(--bg4),rgba(255,71,87,0.15))">💩 Top 3 Worst Draft Picks</div>';
+                    h += '<div class="card-body" style="padding:0"><table style="font-size:0.85rem"><thead><tr>';
+                    h += '<th>Player</th><th>Year</th><th>Rd</th><th>Score</th>';
+                    h += '</tr></thead><tbody>';
+                    bio.worst_draft_picks.forEach(function(pick) {
+                        h += '<tr>';
+                        h += '<td><span class="pos-badge ' + (pick.position || '').toLowerCase().replace('/', '') + '">' + (pick.position || '?') + '</span>' + pick.player_name + '</td>';
+                        h += '<td style="font-family:Oswald">' + pick.year + '</td>';
+                        h += '<td style="font-family:Oswald;text-align:center">R' + pick.round + '</td>';
+                        h += '<td style="font-family:Oswald;color:var(--danger)">' + (pick.pick_score || 0).toFixed(1) + '</td>';
+                        h += '</tr>';
+                    });
+                    h += '</tbody></table></div></div>';
+                }
+                
+                h += '</div>';
+            }
+            
+            // Finishing Position Trend Chart
+            if (bio.finishing_positions && bio.finishing_positions.length > 1) {
+                h += '<div class="card" style="margin-bottom:1.5rem"><div class="card-header">📈 Finishing Position Trend</div>';
+                h += '<div class="card-body"><div id="finishChart" style="height:200px"></div></div></div>';
+            }
+            
+            // Top 3 Seasons
+            h += '<div class="section-title" style="border-color:var(--gold)">🏆 Top Seasons</div>';
+            h += '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem">';
+            (bio.top_seasons || []).forEach(function(s, i) {
+                var medal = i === 0 ? '🥇' : (i === 1 ? '🥈' : '🥉');
+                h += '<div class="card"><div class="card-body" style="text-align:center">';
+                h += '<div style="font-size:1.5rem">' + medal + '</div>';
+                h += '<div style="font-family:Oswald;font-size:1.25rem;color:var(--gold)">' + s.year + '</div>';
+                h += '<div style="font-family:Oswald;font-size:1.5rem;color:var(--accent)">' + s.points.toFixed(1) + ' pts</div>';
+                h += '<div style="font-size:0.85rem;color:var(--text3)">' + s.record + '</div>';
+                h += '</div></div>';
+            });
+            h += '</div>';
+            
+            // Player Stats Section
+            h += '<div class="section-title" style="border-color:var(--accent)">⭐ Player Statistics</div>';
+            h += '<div class="grid-2" style="gap:1rem;margin-bottom:1.5rem">';
+            
+            // Most Started Players by Position
+            h += '<div class="card"><div class="card-header">🔄 Most Started Players</div><div class="card-body" style="padding:0;max-height:400px;overflow:auto">';
+            var positions = ["QB", "RB", "WR", "TE", "K", "D/ST"];
+            positions.forEach(function(pos) {
+                var players = bio.top_starts_by_position[pos] || [];
+                if (players.length > 0) {
+                    h += '<div style="padding:0.5rem 1rem;background:var(--bg4);font-weight:600;font-size:0.8rem;color:var(--text3)">' + pos + '</div>';
+                    players.forEach(function(p, i) {
+                        h += '<div style="padding:0.4rem 1rem;border-bottom:1px solid var(--border);font-size:0.85rem;display:flex;justify-content:space-between">';
+                        h += '<span>' + (i+1) + '. ' + p.name + '</span>';
+                        h += '<span style="color:var(--text3)">' + p.starts + ' starts (' + p.years.join(', ') + ')</span>';
+                        h += '</div>';
+                    });
+                }
+            });
+            h += '</div></div>';
+            
+            // Highest Scoring Players by Position
+            h += '<div class="card"><div class="card-header">🔥 Highest Scoring Players</div><div class="card-body" style="padding:0;max-height:400px;overflow:auto">';
+            positions.forEach(function(pos) {
+                var players = bio.top_points_by_position[pos] || [];
+                if (players.length > 0) {
+                    h += '<div style="padding:0.5rem 1rem;background:var(--bg4);font-weight:600;font-size:0.8rem;color:var(--text3)">' + pos + '</div>';
+                    players.forEach(function(p, i) {
+                        h += '<div style="padding:0.4rem 1rem;border-bottom:1px solid var(--border);font-size:0.85rem;display:flex;justify-content:space-between">';
+                        h += '<span>' + (i+1) + '. ' + p.name + '</span>';
+                        h += '<span style="color:var(--accent);font-family:Oswald">' + p.points.toFixed(1) + ' pts</span>';
+                        h += '</div>';
+                    });
+                }
+            });
+            h += '</div></div>';
+            
+            h += '</div>';
+            
+            // Lineup Performance Section
+            h += '<div class="section-title" style="border-color:var(--warn)">🎯 Lineup Performance</div>';
+            h += '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1rem">';
+            
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Avg Accuracy</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem;color:var(--accent)">' + bio.avg_accuracy.toFixed(1) + '%</div>';
+            h += '</div></div>';
+            
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Total Chugs</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem;color:var(--danger)">' + bio.total_chugs + '</div>';
+            h += '</div></div>';
+            
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Games Lost to Lineup</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem;color:var(--danger)">' + bio.total_games_lost + '</div>';
+            h += '</div></div>';
+            
+            // Average Position Rank
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Avg Starter Rank</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem;color:' + ((bio.overall_avg_position_rank || 0) <= 15 ? 'var(--accent)' : 'var(--text1)') + '">' + (bio.overall_avg_position_rank || 0).toFixed(1) + '</div>';
+            h += '<div style="font-size:0.7rem;color:var(--text3)">Weighted avg</div>';
+            h += '</div></div>';
+            
+            h += '</div>';
+            
+            // Average Position Ranks by Position
+            if (bio.avg_position_ranks && Object.keys(bio.avg_position_ranks).length > 0) {
+                h += '<div class="card" style="margin-bottom:1rem"><div class="card-header">📊 Average Starter Rank by Position</div>';
+                h += '<div class="card-body" style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:center">';
+                var posOrder = ["QB", "RB", "WR", "TE", "K", "D/ST"];
+                posOrder.forEach(function(pos) {
+                    var rank = bio.avg_position_ranks[pos];
+                    if (rank) {
+                        var rankColor = rank <= 10 ? 'var(--accent)' : (rank <= 20 ? 'var(--gold)' : 'var(--text3)');
+                        h += '<div style="text-align:center;min-width:60px">';
+                        h += '<div style="font-size:0.7rem;color:var(--text3);text-transform:uppercase">' + pos + '</div>';
+                        h += '<div style="font-family:Oswald;font-size:1.25rem;color:' + rankColor + '">' + rank.toFixed(1) + '</div>';
+                        h += '</div>';
+                    }
+                });
+                h += '</div></div>';
+            }
+            
+            // Yearly Accuracy Table
+            h += '<div class="card" style="margin-bottom:1.5rem"><div class="card-header">📅 Lineup Performance by Year</div>';
+            h += '<div class="card-body" style="padding:0;overflow-x:auto"><table><thead><tr><th>Year</th><th>Accuracy</th><th>Games Lost</th></tr></thead><tbody>';
+            bio.yearly_accuracy.forEach(function(y, i) {
+                var gl = bio.yearly_games_lost[i] || {games_lost: 0};
+                h += '<tr>';
+                h += '<td style="font-family:Oswald">' + y.year + '</td>';
+                h += '<td style="color:' + (y.accuracy >= 70 ? 'var(--accent)' : (y.accuracy >= 60 ? 'var(--text1)' : 'var(--danger)')) + '">' + y.accuracy.toFixed(1) + '%</td>';
+                h += '<td style="color:' + (gl.games_lost === 0 ? 'var(--accent)' : 'var(--danger)') + '">' + gl.games_lost + '</td>';
+                h += '</tr>';
+            });
+            h += '</tbody></table></div></div>';
+            
+            // Trade Performance Section
+            h += '<div class="section-title" style="border-color:var(--gold)">🔄 Trade Performance</div>';
+            h += '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1rem">';
+            
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Total Trades</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem">' + bio.total_trades + '</div>';
+            h += '</div></div>';
+            
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Trade Record</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem"><span style="color:var(--accent)">' + bio.trade_wins + 'W</span> - <span style="color:var(--danger)">' + bio.trade_losses + 'L</span></div>';
+            h += '</div></div>';
+            
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Win Rate</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem;color:' + (bio.trade_accuracy >= 50 ? 'var(--accent)' : 'var(--danger)') + '">' + bio.trade_accuracy.toFixed(1) + '%</div>';
+            h += '</div></div>';
+            
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Net Trade Value</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem;color:' + (bio.total_trade_value >= 0 ? 'var(--accent)' : 'var(--danger)') + '">' + (bio.total_trade_value >= 0 ? '+' : '') + bio.total_trade_value.toFixed(1) + '</div>';
+            h += '</div></div>';
+            
+            h += '</div>';
+            
+            // Yearly Trade Table
+            if (bio.yearly_trades && bio.yearly_trades.length > 0) {
+                h += '<div class="card"><div class="card-header">📅 Trade Performance by Year</div>';
+                h += '<div class="card-body" style="padding:0;overflow-x:auto"><table><thead><tr><th>Year</th><th>Trades</th><th>Record</th><th>Net Value</th></tr></thead><tbody>';
+                bio.yearly_trades.forEach(function(t) {
+                    h += '<tr>';
+                    h += '<td style="font-family:Oswald">' + t.year + '</td>';
+                    h += '<td>' + t.count + '</td>';
+                    h += '<td><span style="color:var(--accent)">' + t.wins + 'W</span> - <span style="color:var(--danger)">' + t.losses + 'L</span></td>';
+                    h += '<td style="font-family:Oswald;color:' + (t.net_value >= 0 ? 'var(--accent)' : 'var(--danger)') + '">' + (t.net_value >= 0 ? '+' : '') + t.net_value.toFixed(1) + '</td>';
+                    h += '</tr>';
+                });
+                h += '</tbody></table></div></div>';
+            }
+            
+            // Draft Performance Section
+            h += '<div class="section-title" style="border-color:var(--accent)">🎯 Draft Performance</div>';
+            
+            // Draft Stats Summary Cards
+            h += '<div class="grid-4" style="gap:1rem;margin-bottom:1.5rem">';
+            
+            // Average Draft Score
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Avg Draft Score</div>';
+            var avgDraftScore = bio.avg_draft_score || 0;
+            var draftColor = avgDraftScore >= 60 ? 'var(--accent)' : (avgDraftScore >= 40 ? 'var(--gold)' : 'var(--danger)');
+            h += '<div style="font-family:Oswald;font-size:2rem;color:' + draftColor + '">' + avgDraftScore.toFixed(1) + '</div>';
+            h += '<div style="font-size:0.8rem;color:var(--text2)">' + (bio.draft_history ? bio.draft_history.length : 0) + ' drafts</div>';
+            h += '</div></div>';
+            
+            // Best Draft
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Best Draft</div>';
+            if (bio.best_draft) {
+                h += '<div style="font-family:Oswald;font-size:2rem;color:var(--accent)">' + bio.best_draft.score.toFixed(1) + '</div>';
+                h += '<div style="font-size:0.8rem;color:var(--text2)">' + bio.best_draft.year + '</div>';
+            } else {
+                h += '<div style="font-family:Oswald;font-size:2rem;color:var(--text3)">-</div>';
+            }
+            h += '</div></div>';
+            
+            // Worst Draft
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Worst Draft</div>';
+            if (bio.worst_draft) {
+                h += '<div style="font-family:Oswald;font-size:2rem;color:var(--danger)">' + bio.worst_draft.score.toFixed(1) + '</div>';
+                h += '<div style="font-size:0.8rem;color:var(--text2)">' + bio.worst_draft.year + '</div>';
+            } else {
+                h += '<div style="font-family:Oswald;font-size:2rem;color:var(--text3)">-</div>';
+            }
+            h += '</div></div>';
+            
+            // Top/Worst Draft Count
+            h += '<div class="card"><div class="card-body" style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">League Best/Worst</div>';
+            h += '<div style="font-family:Oswald;font-size:1.5rem">';
+            h += '<span style="color:var(--accent)">' + (bio.top_draft_count || 0) + '🏆</span>';
+            h += ' / ';
+            h += '<span style="color:var(--danger)">' + (bio.worst_draft_count || 0) + '💩</span>';
+            h += '</div>';
+            h += '<div style="font-size:0.8rem;color:var(--text2)">Top / Worst Drafts</div>';
+            h += '</div></div>';
+            
+            h += '</div>';
+            
+            // Draft History Table
+            if (bio.draft_history && bio.draft_history.length > 0) {
+                h += '<div class="card" style="margin-bottom:1.5rem"><div class="card-header">📅 Draft History by Year</div>';
+                h += '<div class="card-body" style="padding:0"><table><thead><tr>';
+                h += '<th>Year</th><th>FDS+</th><th>Grade</th><th>Rank</th><th>🏆 Best</th><th>💩 Worst</th><th>Status</th>';
+                h += '</tr></thead><tbody>';
+                bio.draft_history.forEach(function(d) {
+                    var scoreColor = d.score >= 60 ? 'var(--accent)' : (d.score >= 40 ? 'var(--gold)' : 'var(--danger)');
+                    var isBest = bio.best_draft && bio.best_draft.year === d.year;
+                    var isWorst = bio.worst_draft && bio.worst_draft.year === d.year;
+                    var rowStyle = d.is_top_draft ? 'background:rgba(0,255,136,0.1)' : (d.is_worst_draft ? 'background:rgba(255,68,68,0.1)' : '');
+                    
+                    h += '<tr style="' + rowStyle + '">';
+                    h += '<td style="font-family:Oswald">' + d.year + '</td>';
+                    h += '<td style="font-family:Oswald;color:' + scoreColor + '">' + d.score.toFixed(1) + '</td>';
+                    h += '<td>' + d.grade + '</td>';
+                    h += '<td style="font-family:Oswald;text-align:center">#' + d.rank + '</td>';
+                    h += '<td style="font-family:Oswald;text-align:center;color:var(--accent)">' + d.best_picks + '</td>';
+                    h += '<td style="font-family:Oswald;text-align:center;color:var(--danger)">' + d.worst_picks + '</td>';
+                    h += '<td>';
+                    if (d.is_top_draft) h += '<span style="color:var(--accent)">🏆 League Best</span>';
+                    else if (d.is_worst_draft) h += '<span style="color:var(--danger)">💩 League Worst</span>';
+                    else if (isBest) h += '<span style="color:var(--gold)">⭐ Personal Best</span>';
+                    else if (isWorst) h += '<span style="color:var(--text3)">📉 Personal Worst</span>';
+                    h += '</td>';
+                    h += '</tr>';
+                });
+                h += '</tbody></table></div></div>';
+            }
+            
+            // Keepers Selected
+            if (bio.keepers_selected && bio.keepers_selected.length > 0) {
+                h += '<div class="card"><div class="card-header">🔒 Keepers Selected (' + bio.total_keepers + ' total)</div>';
+                h += '<div class="card-body" style="padding:0"><table><thead><tr>';
+                h += '<th>Year</th><th>Player</th><th>Pos</th><th>Pos Rank</th><th>Points</th>';
+                h += '</tr></thead><tbody>';
+                bio.keepers_selected.forEach(function(k) {
+                    var rankColor = k.position_rank <= 5 ? 'var(--accent)' : (k.position_rank <= 12 ? 'var(--gold)' : 'var(--text3)');
+                    h += '<tr>';
+                    h += '<td style="font-family:Oswald">' + k.year + '</td>';
+                    h += '<td style="font-weight:600">' + k.player + '</td>';
+                    h += '<td style="text-align:center">' + k.position + '</td>';
+                    h += '<td style="font-family:Oswald;text-align:center;color:' + rankColor + '">';
+                    h += k.position_rank > 0 ? (k.position + k.position_rank) : '-';
+                    h += '</td>';
+                    h += '<td style="font-family:Oswald;text-align:center">' + k.total_points.toFixed(1) + '</td>';
+                    h += '</tr>';
+                });
+                h += '</tbody></table></div></div>';
+            }
+            
+            document.getElementById('main').innerHTML = h;
+            
+            // Draw finishing position chart
+            if (bio.finishing_positions && bio.finishing_positions.length > 1) {
+                setTimeout(function() {
+                    drawFinishChart(bio.finishing_positions);
+                }, 100);
+            }
+            
+            // Add manager selector event
+            setTimeout(function() {
+                var sel = document.getElementById('bioManagerSelect');
+                if (sel) {
+                    sel.onchange = function() {
+                        bioManager = this.value;
+                        renderBiography();
+                    };
+                }
+            }, 0);
+        }
+        
+        function drawFinishChart(positions) {
+            var container = document.getElementById('finishChart');
+            if (!container) return;
+            
+            var width = container.offsetWidth;
+            var height = 220;
+            var padding = 40;
+            
+            var years = positions.map(function(p) { return p.year; });
+            var finishes = positions.map(function(p) { return p.position; });
+            // Fixed Y-axis from 1 to 10
+            var maxFinish = 10;
+            
+            var xScale = (width - padding * 2) / (years.length - 1 || 1);
+            var yScale = (height - padding * 2 - 15) / (maxFinish - 1);
+            
+            var svg = '<svg width="' + width + '" height="' + height + '" style="font-family:Barlow Condensed,sans-serif">';
+            
+            // Y-axis labels (inverted - 1 at top, 10 at bottom)
+            for (var i = 1; i <= maxFinish; i++) {
+                var y = padding + (i - 1) * yScale;
+                svg += '<text x="' + (padding - 10) + '" y="' + (y + 4) + '" text-anchor="end" fill="var(--text3)" font-size="12">' + i + '</text>';
+                svg += '<line x1="' + padding + '" y1="' + y + '" x2="' + (width - padding) + '" y2="' + y + '" stroke="var(--border)" stroke-dasharray="2,2"/>';
+            }
+            
+            // Draw line
+            var points = [];
+            positions.forEach(function(p, i) {
+                var x = padding + i * xScale;
+                var y = padding + (p.position - 1) * yScale;
+                points.push(x + ',' + y);
+            });
+            svg += '<polyline points="' + points.join(' ') + '" fill="none" stroke="var(--accent)" stroke-width="2"/>';
+            
+            // Draw points and labels
+            positions.forEach(function(p, i) {
+                var x = padding + i * xScale;
+                var y = padding + (p.position - 1) * yScale;
+                var color = p.position === 1 ? 'var(--gold)' : (p.position <= 4 ? 'var(--accent)' : 'var(--text2)');
+                svg += '<circle cx="' + x + '" cy="' + y + '" r="6" fill="' + color + '"/>';
+                // Show position and record above the point
+                var recordStr = p.record ? ' (' + p.record + ')' : '';
+                svg += '<text x="' + x + '" y="' + (y - 10) + '" text-anchor="middle" fill="' + color + '" font-size="10" font-weight="600">' + p.position + recordStr + '</text>';
+                // Year below
+                svg += '<text x="' + x + '" y="' + (height - 5) + '" text-anchor="middle" fill="var(--text3)" font-size="11">' + p.year + '</text>';
+            });
+            
+            svg += '</svg>';
+            container.innerHTML = svg;
+        }
+        
+        function renderTrades() {
+            var s = data.seasons[year];
+            if (!s) return;
+            var trades = s.trades || {trades: [], manager_net_par: [], has_trades: false};
+            
+            // Build year selector
+            var years = Object.keys(data.seasons).sort(function(a,b){return b-a});
+            var h = '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">';
+            h += '<div class="section-title" style="margin:0">📊 Trade Analyzer</div>';
+            h += '<select id="tradeYearSelect" style="background:var(--bg3);color:var(--text1);border:1px solid var(--bg4);padding:0.5rem 1rem;border-radius:4px;font-family:Oswald">';
+            years.forEach(function(y) {
+                var hasTradeData = data.seasons[y].trades && data.seasons[y].trades.has_trades;
+                h += '<option value="'+y+'"'+(y==year?' selected':'')+'>' + y + (hasTradeData ? ' ✓' : '') + '</option>';
+            });
+            h += '</select></div>';
+            
+            if (!trades.has_trades) {
+                h += '<div class="card"><div class="card-body" style="text-align:center;padding:2rem">';
+                h += '<div style="font-size:2rem;margin-bottom:1rem">📭</div>';
+                h += '<div style="color:var(--text2)">No trades found for ' + year + ' season</div>';
+                h += '<div style="color:var(--text3);font-size:0.85rem;margin-top:0.5rem">Trade data may only be available for the current season due to ESPN API limitations</div>';
+                h += '</div></div>';
+                document.getElementById('main').innerHTML = h;
+                // Add year selector event after render
+                setTimeout(function() {
+                    var sel = document.getElementById('tradeYearSelect');
+                    if (sel) sel.onchange = function() { year = this.value; renderTrades(); };
+                }, 0);
+                return;
+            }
+            
+            // Manager Net PAR Summary
+            h += '<div class="section-title" style="border-color:var(--accent)">👑 Trade Performance by Manager</div>';
+            h += '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:2rem">';
+            
+            if (trades.manager_net_par && trades.manager_net_par.length > 0) {
+                trades.manager_net_par.forEach(function(m, i) {
+                    var isPositive = m.net_par >= 0;
+                    var bgStyle = i === 0 ? 'background:linear-gradient(135deg,var(--bg3),rgba(0,255,135,0.15));border-color:var(--accent)' : 
+                                  (isPositive ? '' : 'border-color:var(--danger)');
+                    h += '<div class="card" style="' + bgStyle + '">';
+                    h += '<div class="card-body" style="text-align:center;padding:1rem">';
+                    h += '<div style="font-size:0.8rem;color:var(--text3);text-transform:uppercase">Net Trade Value</div>';
+                    h += '<div style="font-family:Oswald;font-size:1.5rem;color:' + (isPositive ? 'var(--accent)' : 'var(--danger)') + '">';
+                    h += (isPositive ? '+' : '') + m.net_par.toFixed(1) + ' pts';
+                    h += '</div>';
+                    h += '<div style="font-weight:600;margin-top:0.25rem">' + m.manager + '</div>';
+                    h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">';
+                    h += '<span style="color:var(--accent)">' + (m.wins || 0) + 'W</span> - <span style="color:var(--danger)">' + (m.losses || 0) + 'L</span>';
+                    h += '</div>';
+                    if (i === 0 && trades.manager_net_par.length > 1) {
+                        h += '<div style="font-size:0.7rem;color:var(--gold);margin-top:0.25rem">🏆 Best Trader</div>';
+                    }
+                    h += '</div></div>';
+                });
+            }
+            h += '</div>';
+            
+            // Individual Trades Table
+            h += '<div class="section-title" style="border-color:var(--gold)">🔄 All Trades (' + trades.trade_count + ') <span style="font-size:0.7rem;color:var(--text3);font-weight:normal">— Click a trade for details</span></div>';
+            h += '<div class="card"><div class="card-body" style="padding:0;overflow-x:auto">';
+            h += '<table><thead><tr>';
+            h += '<th>Wk</th>';
+            h += '<th>Date</th>';
+            h += '<th>Team 1</th>';
+            h += '<th>Received</th>';
+            h += '<th>Sent</th>';
+            h += '<th>Score</th>';
+            h += '<th>Team 2</th>';
+            h += '<th>Received</th>';
+            h += '<th>Sent</th>';
+            h += '<th>Score</th>';
+            h += '</tr></thead><tbody>';
+            
+            // Store trades globally for modal access
+            window.currentTrades = trades.trades || [];
+            
+            if (trades.trades && trades.trades.length > 0) {
+                trades.trades.forEach(function(t, idx) {
+                    var t1Better = t.team1_score > t.team2_score;
+                    var t2Better = t.team2_score > t.team1_score;
+                    
+                    // Format date if available
+                    var dateStr = '-';
+                    if (t.date && t.date > 0) {
+                        var d = new Date(t.date);
+                        dateStr = (d.getMonth()+1) + '/' + d.getDate();
+                    }
+                    
+                    h += '<tr onclick="showTradeDetail(' + idx + ')" style="cursor:pointer" class="clickable-row">';
+                    h += '<td style="font-family:Oswald">' + (t.week || '-') + '</td>';
+                    h += '<td style="font-size:0.8rem;color:var(--text3)">' + dateStr + '</td>';
+                    
+                    // Team 1
+                    h += '<td style="font-weight:600;' + (t1Better ? 'color:var(--accent)' : '') + '">' + t.team1 + '</td>';
+                    h += '<td style="font-size:0.8rem">' + (t.team1_acquired || []).join(', ') + '</td>';
+                    h += '<td style="font-size:0.8rem;color:var(--text3)">' + (t.team1_traded || []).join(', ') + '</td>';
+                    h += '<td style="font-family:Oswald;' + (t.team1_score >= 0 ? 'color:var(--accent)' : 'color:var(--danger)') + '">';
+                    h += (t.team1_score >= 0 ? '+' : '') + t.team1_score.toFixed(1);
+                    h += '</td>';
+                    
+                    // Team 2
+                    h += '<td style="font-weight:600;' + (t2Better ? 'color:var(--accent)' : '') + '">' + t.team2 + '</td>';
+                    h += '<td style="font-size:0.8rem">' + (t.team2_acquired || []).join(', ') + '</td>';
+                    h += '<td style="font-size:0.8rem;color:var(--text3)">' + (t.team2_traded || []).join(', ') + '</td>';
+                    h += '<td style="font-family:Oswald;' + (t.team2_score >= 0 ? 'color:var(--accent)' : 'color:var(--danger)') + '">';
+                    h += (t.team2_score >= 0 ? '+' : '') + t.team2_score.toFixed(1);
+                    h += '</td>';
+                    
+                    h += '</tr>';
+                });
+            } else {
+                h += '<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:2rem">No trades found</td></tr>';
+            }
+            
+            h += '</tbody></table></div></div>';
+            
+            // Explanation
+            h += '<div class="card" style="margin-top:1.5rem"><div class="card-header">ℹ️ How Trade Success Scores Are Calculated</div><div class="card-body">';
+            h += '<div style="color:var(--text2);font-size:0.85rem">';
+            h += '<p style="margin:0 0 1rem 0"><strong>Trade Success Score</strong> measures the net point impact of a trade on your team\'s weekly scores.</p>';
+            h += '<p style="margin:0 0 0.75rem 0"><strong>Calculation:</strong></p>';
+            h += '<ul style="margin:0 0 1rem 1.5rem;padding:0">';
+            h += '<li style="margin-bottom:0.5rem"><strong>Points Gained:</strong> Sum of points scored by acquired players when they were in YOUR starting lineup</li>';
+            h += '<li style="margin-bottom:0.5rem"><strong>Points Lost:</strong> Sum of points scored by traded-away players when they were in the OTHER team\'s starting lineup</li>';
+            h += '<li><strong>Score = Points Gained − Points Lost</strong></li>';
+            h += '</ul>';
+            h += '<p style="margin:0 0 0.75rem 0"><strong>Key Rules:</strong></p>';
+            h += '<ul style="margin:0 0 0 1.5rem;padding:0">';
+            h += '<li style="margin-bottom:0.5rem">Only counts points from weeks AFTER the trade occurred</li>';
+            h += '<li style="margin-bottom:0.5rem">Only counts points when the player was in a <strong>starting lineup slot</strong> (bench points don\'t count)</li>';
+            h += '<li style="margin-bottom:0.5rem">If a player is traded again later, points stop counting at that point</li>';
+            h += '<li>A positive score means the trade helped your team; negative means it hurt</li>';
+            h += '</ul>';
+            h += '</div></div></div>';
+            
+            document.getElementById('main').innerHTML = h;
+            
+            // Add year selector event after render
+            setTimeout(function() {
+                var sel = document.getElementById('tradeYearSelect');
+                if (sel) sel.onchange = function() { year = this.value; renderTrades(); };
+            }, 0);
+        }
+        
+        // Global variables for draft view
+        var draftYear = null;
+        var draftViewMode = 'keepers'; // 'keepers' or 'scores'
+        
+        function renderDraft() {
+            var drafts = data.drafts || {};
+            var draftYears = Object.keys(drafts).sort(function(a,b) { return b - a; });
+            
+            if (draftYears.length === 0) {
+                document.getElementById('main').innerHTML = '<div class="card"><div class="card-body" style="text-align:center;padding:3rem"><div style="font-size:3rem;margin-bottom:1rem">📋</div><div style="font-size:1.25rem;margin-bottom:0.5rem">No Draft Data Available</div><div style="color:var(--text3)">Draft data could not be loaded for this league.</div></div></div>';
+                return;
+            }
+            
+            // Default to most recent year
+            if (!draftYear || !drafts[draftYear]) {
+                draftYear = draftYears[0];
+            }
+            
+            var draft = drafts[draftYear];
+            var picks = draft.picks || [];
+            var isKeeperDraft = draft.is_keeper_draft;
+            var numTeams = draft.num_teams || 10;
+            var numRounds = draft.num_rounds || 16;
+            var nextYear = parseInt(draftYear) + 1;
+            var teamGrades = draft.team_grades || {};
+            
+            var h = '';
+            
+            // Header with year selector and view mode
+            h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">';
+            h += '<h2 style="font-family:Oswald;font-size:1.75rem;margin:0">🎯 Draft Analyzer</h2>';
+            h += '<div style="display:flex;gap:0.75rem;flex-wrap:wrap">';
+            h += '<select id="draftViewMode" style="padding:0.5rem 1rem;background:var(--bg3);border:1px solid var(--border);color:var(--text1);border-radius:4px;font-size:1rem">';
+            h += '<option value="keepers"' + (draftViewMode === 'keepers' ? ' selected' : '') + '>🔒 Keeper Analysis</option>';
+            h += '<option value="scores"' + (draftViewMode === 'scores' ? ' selected' : '') + '>📊 Draft Scores</option>';
+            h += '</select>';
+            h += '<select id="draftYearSelect" style="padding:0.5rem 1rem;background:var(--bg3);border:1px solid var(--border);color:var(--text1);border-radius:4px;font-size:1rem">';
+            draftYears.forEach(function(y) {
+                h += '<option value="' + y + '"' + (y == draftYear ? ' selected' : '') + '>' + y + ' Draft</option>';
+            });
+            h += '</select>';
+            h += '</div></div>';
+            
+            if (draftViewMode === 'scores') {
+                // DRAFT SCORES VIEW
+                h += renderDraftScoresView(draft, picks, teamGrades, draftYear, numTeams, numRounds, isKeeperDraft);
+            } else {
+                // KEEPER ANALYSIS VIEW
+                h += renderKeeperView(draft, picks, draftYear, nextYear, numTeams, numRounds, isKeeperDraft, teamGrades);
+            }
+            
+            document.getElementById('main').innerHTML = h;
+            
+            // Add event listeners
+            setTimeout(function() {
+                var yearSel = document.getElementById('draftYearSelect');
+                if (yearSel) yearSel.onchange = function() { draftYear = this.value; renderDraft(); };
+                
+                var modeSel = document.getElementById('draftViewMode');
+                if (modeSel) modeSel.onchange = function() { draftViewMode = this.value; renderDraft(); };
+            }, 0);
+        }
+        
+        function getGradeColor(grade) {
+            if (grade === 'A+' || grade === 'A') return '#00ff88';
+            if (grade === 'B+' || grade === 'B') return '#00cc6a';
+            if (grade === 'C+' || grade === 'C') return 'var(--gold)';
+            if (grade === 'D') return '#ff9900';
+            return 'var(--danger)';
+        }
+        
+        function getScoreBarWidth(score) {
+            return Math.min(score / 120 * 100, 100);
+        }
+        
+        function renderDraftScoresView(draft, picks, teamGrades, draftYear, numTeams, numRounds, isKeeperDraft) {
+            var h = '';
+            
+            // Team Draft Grades Summary - FDS+ Scores
+            h += '<div class="section-title" style="border-color:var(--gold)">🏆 Fantasy Draft Score (FDS+) - ' + draftYear + '</div>';
+            
+            // Sort teams by normalized score
+            var sortedTeams = Object.keys(teamGrades).map(function(name) {
+                return { name: name, data: teamGrades[name] };
+            }).sort(function(a, b) { return b.data.normalized_score - a.data.normalized_score; });
+            
+            h += '<div class="grid-2" style="gap:1rem;margin-bottom:1.5rem">';
+            sortedTeams.forEach(function(team, idx) {
+                var gradeColor = getFDSGradeColor(team.data.normalized_score);
+                var bestCount = team.data.best_picks_count || 0;
+                var worstCount = team.data.worst_picks_count || 0;
+                h += '<div class="card">';
+                h += '<div class="card-body" style="padding:1rem">';
+                h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">';
+                h += '<span style="font-weight:600">' + (idx + 1) + '. ' + team.name + '</span>';
+                h += '<div style="text-align:right">';
+                h += '<div style="font-family:Oswald;font-size:1.75rem;color:' + gradeColor + '">' + team.data.normalized_score.toFixed(0) + '</div>';
+                h += '<div style="font-size:0.7rem;color:var(--text3)">' + team.data.grade + '</div>';
+                h += '</div></div>';
+                h += '<div style="background:var(--bg2);border-radius:4px;height:10px;overflow:hidden;margin-bottom:0.5rem">';
+                h += '<div style="background:' + gradeColor + ';height:100%;width:' + team.data.normalized_score + '%;transition:width 0.3s"></div>';
+                h += '</div>';
+                h += '<div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text3)">';
+                h += '<span>Raw: ' + team.data.raw_score.toFixed(1) + '</span>';
+                h += '<span style="display:flex;gap:0.75rem">';
+                h += '<span title="Best Picks of Round" style="color:var(--gold)">🏆 ' + bestCount + '</span>';
+                h += '<span title="Worst Picks of Round" style="color:var(--danger)">💩 ' + worstCount + '</span>';
+                h += '<span>' + team.data.pick_count + ' picks</span>';
+                h += '</span></div>';
+                h += '</div></div>';
+            });
+            h += '</div>';
+            
+            // Top 5 Best Picks of the Draft
+            var top5Best = draft.top_5_best_picks || [];
+            if (top5Best.length > 0) {
+                h += '<div class="card" style="margin-bottom:1.5rem"><div class="card-header" style="background:linear-gradient(135deg,var(--bg4),rgba(0,255,135,0.2))">⭐ Top 5 Best Picks of the Draft</div>';
+                h += '<div class="card-body" style="padding:0"><table style="font-size:0.85rem"><thead><tr>';
+                h += '<th>Rank</th><th>Player</th><th>Manager</th><th>Round</th><th>Pick</th><th>Pts</th><th>Pos Rank</th><th>FDS+ Score</th>';
+                h += '</tr></thead><tbody>';
+                top5Best.forEach(function(pick, i) {
+                    var medal = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : (i + 1)));
+                    var rankColor = pick.position_rank <= 5 ? 'var(--accent)' : (pick.position_rank <= 12 ? 'var(--gold)' : 'var(--text3)');
+                    h += '<tr>';
+                    h += '<td style="font-family:Oswald;text-align:center;font-size:1.1rem">' + medal + '</td>';
+                    h += '<td style="font-weight:600"><span class="pos-badge ' + (pick.position || '').toLowerCase().replace('/', '') + '">' + (pick.position || '?') + '</span>' + pick.player_name + '</td>';
+                    h += '<td>' + pick.team_name + '</td>';
+                    h += '<td style="font-family:Oswald;text-align:center">R' + pick.round + '</td>';
+                    h += '<td style="font-family:Oswald;text-align:center">#' + pick.pick_num + '</td>';
+                    h += '<td style="font-family:Oswald;color:var(--accent)">' + (pick.total_points || 0).toFixed(1) + '</td>';
+                    h += '<td style="font-family:Oswald;text-align:center;color:' + rankColor + '">' + (pick.position_rank > 0 ? pick.position + pick.position_rank : '-') + '</td>';
+                    h += '<td style="font-family:Oswald;color:var(--accent);font-weight:600">+' + (pick.pick_score || 0).toFixed(1) + '</td>';
+                    h += '</tr>';
+                });
+                h += '</tbody></table></div></div>';
+            }
+            
+            // Legend for FDS+ columns
+            h += '<div class="card" style="margin-bottom:1.5rem"><div class="card-header">📖 FDS+ Column Legend</div><div class="card-body">';
+            h += '<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:1rem;font-size:0.8rem">';
+            h += '<div><strong style="color:var(--accent)">Pts</strong> - Total fantasy points scored</div>';
+            h += '<div><strong style="color:var(--accent)">VOR</strong> - Value Over Replacement</div>';
+            h += '<div><strong style="color:var(--accent)">Wgt</strong> - Draft Capital Weight (1/√pick)</div>';
+            h += '<div><strong style="color:var(--accent)">Need</strong> - Positional need at pick time</div>';
+            h += '<div><strong style="color:var(--danger)">Pen</strong> - Missed opportunity penalty</div>';
+            h += '<div><strong style="color:var(--gold)">Bon</strong> - Starter utilization bonus</div>';
+            h += '<div><strong style="color:var(--accent)">Score</strong> - Final pick contribution to FDS+</div>';
+            h += '<div><span style="color:var(--gold)">🏆</span> <strong>Best Pick</strong> - Highest score in round</div>';
+            h += '<div><span style="color:var(--danger)">💩</span> <strong>Worst Pick</strong> - Lowest score in round</div>';
+            h += '<div><span style="color:var(--accent)">⭐</span> <strong>Starter</strong> - Started 12+ weeks</div>';
+            h += '<div><span style="color:var(--gold)">🔒</span> <strong>Kept</strong> - Kept for next year\'s draft</div>';
+            h += '</div></div></div>';
+            
+            // Draft Picks with FDS+ Scores by Round
+            h += '<div class="section-title" style="border-color:var(--accent)">📋 Pick-by-Pick FDS+ Breakdown</div>';
+            
+            for (var round = 1; round <= numRounds; round++) {
+                var roundPicks = picks.filter(function(p) { return p.round === round; });
+                if (roundPicks.length === 0) continue;
+                
+                var isKeeperRound = isKeeperDraft && round === 1;
+                
+                h += '<div class="card" style="margin-bottom:1rem">';
+                h += '<div class="card-header" style="' + (isKeeperRound ? 'background:linear-gradient(135deg, var(--gold) 0%, #b8860b 100%);color:#000' : '') + '">';
+                h += 'Round ' + round;
+                if (isKeeperRound) h += ' <span style="font-size:0.8rem">(Keeper Round - No Missed Opportunity Penalty)</span>';
+                h += '</div>';
+                h += '<div class="card-body" style="padding:0;overflow-x:auto">';
+                h += '<table style="font-size:0.85rem"><thead><tr>';
+                h += '<th style="width:40px">Pick</th>';
+                h += '<th>Player</th>';
+                h += '<th>Manager</th>';
+                h += '<th style="width:45px">Pos</th>';
+                h += '<th style="width:65px">Pts</th>';
+                h += '<th style="width:55px">VOR</th>';
+                h += '<th style="width:50px">Wgt</th>';
+                h += '<th style="width:45px">Need</th>';
+                h += '<th style="width:50px">Pen</th>';
+                h += '<th style="width:45px">Bon</th>';
+                h += '<th style="width:180px">Score Visual</th>';
+                h += '<th style="width:60px">Score</th>';
+                if (parseInt(draftYear) >= 2021 && parseInt(draftYear) < new Date().getFullYear()) {
+                    h += '<th style="width:100px">Kept ' + (parseInt(draftYear) + 1) + '</th>';
+                }
+                h += '</tr></thead><tbody>';
+                
+                roundPicks.forEach(function(pick) {
+                    var vorColor = pick.vor >= 0 ? 'var(--accent)' : 'var(--danger)';
+                    var scoreColor = getFDSPickScoreColor(pick.pick_score);
+                    var needColor = pick.need_level === 'High' ? 'var(--accent)' : (pick.need_level === 'Med' ? 'var(--gold)' : 'var(--text3)');
+                    var isBestOfRound = pick.is_best_of_round;
+                    var isWorstOfRound = pick.is_worst_of_round;
+                    
+                    // Determine row style - best/worst pick of round gets special highlight
+                    var rowStyle = '';
+                    if (isBestOfRound) {
+                        rowStyle = 'background:linear-gradient(90deg, rgba(255,215,0,0.2) 0%, rgba(0,255,136,0.15) 100%);border-left:3px solid var(--gold);';
+                    } else if (isWorstOfRound) {
+                        rowStyle = 'background:linear-gradient(90deg, rgba(255,68,68,0.15) 0%, rgba(139,0,0,0.1) 100%);border-left:3px solid var(--danger);';
+                    } else if (pick.vor >= 50) {
+                        rowStyle = 'background:rgba(0,255,136,0.1);';
+                    } else if (pick.vor < -30) {
+                        rowStyle = 'background:rgba(255,68,68,0.1);';
+                    }
+                    
+                    h += '<tr style="' + rowStyle + '">';
+                    h += '<td style="font-family:Oswald;text-align:center">' + pick.pick_num + '</td>';
+                    h += '<td style="font-weight:600">' + pick.player_name;
+                    if (isBestOfRound) h += ' <span style="color:var(--gold)" title="Best Pick of Round">🏆</span>';
+                    if (isWorstOfRound) h += ' <span style="color:var(--danger)" title="Worst Pick of Round">💩</span>';
+                    if (pick.weeks_started >= 12) h += ' <span style="color:var(--accent)" title="Started 12+ weeks">⭐</span>';
+                    h += '</td>';
+                    h += '<td style="color:var(--text2)">' + pick.team_name + '</td>';
+                    h += '<td style="text-align:center">' + pick.position + '</td>';
+                    h += '<td style="font-family:Oswald;text-align:center">' + pick.total_points + '</td>';
+                    
+                    // VOR
+                    h += '<td style="font-family:Oswald;text-align:center;color:' + vorColor + '">' + (pick.vor >= 0 ? '+' : '') + pick.vor + '</td>';
+                    
+                    // Weight
+                    h += '<td style="font-family:Oswald;text-align:center;color:var(--text3)">' + pick.draft_weight.toFixed(2) + '</td>';
+                    
+                    // Need Level
+                    h += '<td style="text-align:center;color:' + needColor + ';font-size:0.75rem;font-weight:600">' + pick.need_level + '</td>';
+                    
+                    // Penalty (hidden for keeper rounds)
+                    var penColor = pick.missed_penalty > 5 ? 'var(--danger)' : (pick.missed_penalty > 0 ? '#ff9900' : 'var(--text3)');
+                    h += '<td style="font-family:Oswald;text-align:center;color:' + penColor + '">';
+                    if (pick.is_keeper_round) {
+                        h += '<span style="color:var(--text3)">N/A</span>';
+                    } else {
+                        h += pick.missed_penalty > 0 ? '-' + pick.missed_penalty : '0';
+                    }
+                    h += '</td>';
+                    
+                    // Bonus
+                    var bonColor = pick.starter_bonus >= 4 ? 'var(--gold)' : 'var(--text3)';
+                    h += '<td style="font-family:Oswald;text-align:center;color:' + bonColor + '">';
+                    h += pick.starter_bonus > 0 ? '+' + pick.starter_bonus : '0';
+                    h += '</td>';
+                    
+                    // Score breakdown visual bar
+                    h += '<td>';
+                    h += '<div style="display:flex;align-items:center;gap:2px;height:20px">';
+                    // VOR component (can be negative)
+                    var vorComponent = pick.scarcity_adjusted_vor * pick.draft_weight;
+                    var maxBarWidth = 120;
+                    var vorBarWidth = Math.min(Math.abs(vorComponent) / 50 * 60, 80);
+                    if (vorComponent >= 0) {
+                        h += '<div style="background:var(--accent);height:14px;width:' + vorBarWidth + 'px;border-radius:2px" title="VOR contribution: +' + vorComponent.toFixed(1) + '"></div>';
+                    } else {
+                        h += '<div style="background:var(--danger);height:14px;width:' + vorBarWidth + 'px;border-radius:2px" title="VOR contribution: ' + vorComponent.toFixed(1) + '"></div>';
+                    }
+                    // Penalty (red, subtracted)
+                    if (pick.missed_penalty > 0) {
+                        var penBarWidth = Math.min(pick.missed_penalty / 20 * 30, 30);
+                        h += '<div style="background:var(--danger);height:10px;width:' + penBarWidth + 'px;border-radius:2px;opacity:0.7" title="Penalty: -' + pick.missed_penalty + '"></div>';
+                    }
+                    // Bonus (gold, added)
+                    if (pick.starter_bonus > 0) {
+                        var bonBarWidth = Math.min(pick.starter_bonus / 5 * 20, 20);
+                        h += '<div style="background:var(--gold);height:12px;width:' + bonBarWidth + 'px;border-radius:2px" title="Bonus: +' + pick.starter_bonus + '"></div>';
+                    }
+                    h += '</div>';
+                    h += '</td>';
+                    
+                    // Final Score
+                    h += '<td style="font-family:Oswald;text-align:center;font-size:1rem;color:' + scoreColor + ';font-weight:600">' + (pick.pick_score >= 0 ? '+' : '') + pick.pick_score + '</td>';
+                    
+                    // Kept for next year column (only for 2021+ drafts, not current year)
+                    if (parseInt(draftYear) >= 2021 && parseInt(draftYear) < new Date().getFullYear()) {
+                        h += '<td style="text-align:center;font-size:0.8rem">';
+                        if (pick.was_kept_next_year) {
+                            h += '<span style="color:var(--gold)" title="Kept by ' + pick.kept_by_team + '">🔒</span> ';
+                            if (pick.kept_by_team !== pick.team_name) {
+                                h += '<span style="color:var(--text2)">' + pick.kept_by_team + '</span>';
+                            } else {
+                                h += '<span style="color:var(--text3)">Same</span>';
+                            }
+                        } else {
+                            h += '<span style="color:var(--text3)">-</span>';
+                        }
+                        h += '</td>';
+                    }
+                    
+                    h += '</tr>';
+                    
+                    // Missed opportunity row (expandable info)
+                    var colSpan = parseInt(draftYear) >= 2021 && parseInt(draftYear) < new Date().getFullYear() ? 13 : 12;
+                    if (pick.missed_penalty > 3 && pick.best_available) {
+                        h += '<tr style="background:rgba(255,68,68,0.05)">';
+                        h += '<td colspan="' + colSpan + '" style="padding:0.3rem 0.75rem;font-size:0.75rem;color:var(--text3)">';
+                        h += '<span style="color:var(--danger)">⚠️ Missed:</span> ' + pick.best_available + ' (' + pick.best_available_pos + ') had VOR +' + pick.best_available_vor + ' available';
+                        h += '</td></tr>';
+                    }
+                });
+                
+                h += '</tbody></table></div></div>';
+            }
+            
+            // FDS+ Methodology explanation
+            h += '<div class="card" style="margin-top:1.5rem"><div class="card-header">📐 Fantasy Draft Score (FDS+) Methodology</div><div class="card-body">';
+            h += '<div style="color:var(--text2);font-size:0.85rem">';
+            
+            h += '<p style="margin:0 0 1rem 0">The <strong>Fantasy Draft Score (FDS+)</strong> is a post-season evaluation metric that objectively measures draft quality using actual fantasy points scored.</p>';
+            
+            h += '<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.5rem;margin-bottom:1.5rem">';
+            
+            // Step 1-3
+            h += '<div style="background:var(--bg2);padding:1rem;border-radius:8px">';
+            h += '<div style="font-weight:600;color:var(--accent);margin-bottom:0.5rem">📊 Value Over Replacement (VOR)</div>';
+            h += '<div style="font-size:0.8rem">VOR = Player Points − Replacement Level</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">Replacement: QB18, RB30, WR36, TE14</div>';
+            h += '</div>';
+            
+            // Step 4
+            h += '<div style="background:var(--bg2);padding:1rem;border-radius:8px">';
+            h += '<div style="font-weight:600;color:var(--accent);margin-bottom:0.5rem">⚖️ Draft Capital Weight</div>';
+            h += '<div style="font-size:0.8rem">Weight = 1 / √(Pick Number)</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">Pick 1 = 1.00, Pick 10 = 0.32, Pick 100 = 0.10</div>';
+            h += '</div>';
+            
+            // Step 5
+            h += '<div style="background:var(--bg2);padding:1rem;border-radius:8px">';
+            h += '<div style="font-weight:600;color:var(--accent);margin-bottom:0.5rem">📈 Positional Scarcity (1-PPR)</div>';
+            h += '<div style="font-size:0.8rem">Multipliers: RB ×1.25, WR ×1.20, TE ×1.10, QB ×1.00</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">Harder-to-replace positions get bonus</div>';
+            h += '</div>';
+            
+            // Step 6
+            h += '<div style="background:var(--bg2);padding:1rem;border-radius:8px">';
+            h += '<div style="font-weight:600;color:var(--accent);margin-bottom:0.5rem">🎯 Positional Need Factor</div>';
+            h += '<div style="font-size:0.8rem">Dynamic at each pick based on team strength</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">High need = full credit, Low need = reduced penalty</div>';
+            h += '</div>';
+            
+            // Step 7
+            h += '<div style="background:var(--bg2);padding:1rem;border-radius:8px">';
+            h += '<div style="font-weight:600;color:var(--danger);margin-bottom:0.5rem">⚠️ Missed Opportunity Penalty</div>';
+            h += '<div style="font-size:0.8rem">Penalty = Missed VOR × Weight × Need × 0.30</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">Reduced if skipped position wasn\'t needed</div>';
+            h += '</div>';
+            
+            // Step 8
+            h += '<div style="background:var(--bg2);padding:1rem;border-radius:8px">';
+            h += '<div style="font-weight:600;color:var(--gold);margin-bottom:0.5rem">⭐ Starter Utilization Bonus</div>';
+            h += '<div style="font-size:0.8rem">Bonus = (Weeks Started / Total Weeks) × 5</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">Rewards lineup reliability and availability</div>';
+            h += '</div>';
+            
+            h += '</div>';
+            
+            // Final formula
+            h += '<div style="background:var(--bg3);padding:1rem;border-radius:8px;margin-bottom:1rem">';
+            h += '<div style="font-weight:600;margin-bottom:0.5rem">📝 Final Pick Score Formula:</div>';
+            h += '<div style="font-family:monospace;font-size:0.85rem;color:var(--accent)">';
+            h += 'Pick Score = (Scarcity-Adjusted VOR × Draft Weight) − Missed Penalty + Starter Bonus';
+            h += '</div></div>';
+            
+            // Grade scale
+            h += '<div style="font-weight:600;margin-bottom:0.5rem">🏆 Team FDS+ Grade Scale (Normalized 0-100):</div>';
+            h += '<div style="display:flex;flex-wrap:wrap;gap:1rem">';
+            h += '<span><strong style="color:#00ff88">90-100</strong> Elite</span>';
+            h += '<span><strong style="color:#00cc6a">75-89</strong> Strong</span>';
+            h += '<span><strong style="color:var(--gold)">60-74</strong> Above Avg</span>';
+            h += '<span><strong style="color:#ff9900">40-59</strong> Average</span>';
+            h += '<span><strong style="color:#ff6600">25-39</strong> Below Avg</span>';
+            h += '<span><strong style="color:var(--danger)">0-24</strong> Poor</span>';
+            h += '</div>';
+            
+            h += '</div></div></div>';
+            
+            return h;
+        }
+        
+        // Helper function for FDS+ grade colors
+        function getFDSGradeColor(score) {
+            if (score >= 90) return '#00ff88';
+            if (score >= 75) return '#00cc6a';
+            if (score >= 60) return 'var(--gold)';
+            if (score >= 40) return '#ff9900';
+            if (score >= 25) return '#ff6600';
+            return 'var(--danger)';
+        }
+        
+        function getFDSPickScoreColor(score) {
+            if (score >= 20) return '#00ff88';
+            if (score >= 10) return '#00cc6a';
+            if (score >= 0) return 'var(--gold)';
+            if (score >= -10) return '#ff9900';
+            return 'var(--danger)';
+        }
+        
+        function renderKeeperView(draft, picks, draftYear, nextYear, numTeams, numRounds, isKeeperDraft, teamGrades) {
+            var h = '';
+            
+            // Draft info card
+            h += '<div class="card" style="margin-bottom:1.5rem"><div class="card-body">';
+            h += '<div style="display:flex;flex-wrap:wrap;gap:2rem;justify-content:center">';
+            
+            h += '<div style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Draft Type</div>';
+            h += '<div style="font-family:Oswald;font-size:1.25rem;color:' + (isKeeperDraft ? 'var(--gold)' : 'var(--accent)') + '">';
+            h += isKeeperDraft ? '🔒 Keeper Draft' : '🐍 Snake Draft';
+            h += '</div></div>';
+            
+            h += '<div style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Teams</div>';
+            h += '<div style="font-family:Oswald;font-size:1.25rem">' + numTeams + '</div>';
+            h += '</div>';
+            
+            h += '<div style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Rounds</div>';
+            h += '<div style="font-family:Oswald;font-size:1.25rem">' + numRounds + '</div>';
+            h += '</div>';
+            
+            h += '<div style="text-align:center">';
+            h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Total Picks</div>';
+            h += '<div style="font-family:Oswald;font-size:1.25rem">' + picks.length + '</div>';
+            h += '</div>';
+            
+            // Count keepers and potential keepers
+            var keeperCount = picks.filter(function(p) { return p.keeper; }).length;
+            
+            if (isKeeperDraft) {
+                h += '<div style="text-align:center">';
+                h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Keepers</div>';
+                h += '<div style="font-family:Oswald;font-size:1.25rem;color:var(--gold)">' + keeperCount + '</div>';
+                h += '</div>';
+            }
+            
+            h += '</div></div></div>';
+            
+            // Legend
+            h += '<div class="card" style="margin-bottom:1.5rem"><div class="card-header">📖 Legend</div><div class="card-body">';
+            h += '<div style="display:flex;flex-wrap:wrap;gap:1.5rem;font-size:0.85rem">';
+            h += '<div><span style="background:var(--gold);color:#000;padding:2px 6px;border-radius:3px;font-weight:600">🔒 KEEPER</span> Player kept from previous season</div>';
+            h += '<div><span style="color:var(--accent);font-weight:600">★ Top 5</span> Finished top 5 at position (QB/RB/WR/TE)</div>';
+            h += '<div><span style="background:linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);color:#000;padding:2px 6px;border-radius:3px;font-weight:600">🌟 BEST KEEPER</span> Top 5 + eligible for ' + nextYear + '</div>';
+            h += '<div><span style="color:var(--danger)">*</span> Not eligible to be kept in ' + nextYear + '</div>';
+            h += '<div style="color:var(--text3)">Points = total fantasy points scored in ' + draftYear + ' season</div>';
+            h += '</div></div></div>';
+            
+            // Draft board by round
+            h += '<div class="section-title" style="border-color:var(--gold)">📋 Draft Results by Round</div>';
+            
+            for (var round = 1; round <= numRounds; round++) {
+                var roundPicks = picks.filter(function(p) { return p.round === round; });
+                if (roundPicks.length === 0) continue;
+                
+                var isKeeperRound = isKeeperDraft && round === 1;
+                var isFirstRound = isKeeperDraft && round === 2;
+                
+                h += '<div class="card" style="margin-bottom:1rem">';
+                h += '<div class="card-header" style="' + (isKeeperRound ? 'background:linear-gradient(135deg, var(--gold) 0%, #b8860b 100%);color:#000' : (isFirstRound ? 'background:linear-gradient(135deg, var(--danger) 0%, #b22222 100%);color:#fff' : '')) + '">';
+                h += 'Round ' + round;
+                if (isKeeperRound) h += ' <span style="font-size:0.8rem">(Keeper Round - Players here cannot be kept in ' + nextYear + ')</span>';
+                if (isFirstRound && parseInt(draftYear) >= 2023) h += ' <span style="font-size:0.8rem">(1st Round - Players here cannot be kept in ' + nextYear + ')</span>';
+                h += '</div>';
+                h += '<div class="card-body" style="padding:0;overflow-x:auto">';
+                h += '<table><thead><tr>';
+                h += '<th style="width:50px">Pick</th>';
+                h += '<th>Player</th>';
+                h += '<th style="width:60px">Pos</th>';
+                h += '<th style="width:80px">Pos Rank</th>';
+                h += '<th>Team</th>';
+                h += '<th style="width:100px">' + draftYear + ' Pts</th>';
+                h += '<th style="width:120px">Status</th>';
+                h += '</tr></thead><tbody>';
+                
+                roundPicks.forEach(function(pick) {
+                    var isKeeper = pick.keeper;
+                    var isTop5 = pick.is_top_5;
+                    var ineligible = pick.ineligible_next_year;
+                    var isPotentialKeeper = pick.is_potential_keeper;
+                    
+                    var rowStyle = '';
+                    if (isKeeper) {
+                        rowStyle = 'background:rgba(255,215,0,0.15);';
+                    } else if (isPotentialKeeper) {
+                        rowStyle = 'background:rgba(0,255,136,0.15);';
+                    } else if (isTop5) {
+                        rowStyle = 'background:rgba(0,255,136,0.08);';
+                    }
+                    
+                    h += '<tr style="' + rowStyle + '">';
+                    h += '<td style="font-family:Oswald;text-align:center">' + pick.pick_num + '</td>';
+                    h += '<td style="font-weight:600">' + pick.player_name;
+                    if (ineligible) h += ' <span style="color:var(--danger)" title="' + (pick.ineligibility_reason || 'Not keeper eligible') + '">*</span>';
+                    h += '</td>';
+                    h += '<td style="text-align:center">' + pick.position + '</td>';
+                    
+                    var rankColor = pick.position_rank <= 5 ? 'var(--accent)' : (pick.position_rank <= 12 ? 'var(--gold)' : 'var(--text3)');
+                    h += '<td style="text-align:center;font-family:Oswald;color:' + rankColor + '">';
+                    if (pick.position_rank > 0) {
+                        h += pick.position + pick.position_rank;
+                        if (isTop5) h += ' <span style="color:var(--accent)">★</span>';
+                    } else {
+                        h += '-';
+                    }
+                    h += '</td>';
+                    h += '<td>' + pick.team_name + '</td>';
+                    h += '<td style="font-family:Oswald;text-align:center;color:' + (pick.total_points > 150 ? 'var(--accent)' : 'var(--text2)') + '">' + (pick.total_points > 0 ? pick.total_points.toFixed(1) : '-') + '</td>';
+                    
+                    h += '<td style="text-align:center">';
+                    if (isKeeper) {
+                        h += '<span style="background:var(--gold);color:#000;padding:2px 6px;border-radius:3px;font-size:0.7rem;font-weight:600">🔒 KEEPER</span>';
+                    } else if (isPotentialKeeper) {
+                        h += '<span style="background:linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);color:#000;padding:2px 6px;border-radius:3px;font-size:0.7rem;font-weight:600">🌟 BEST ' + nextYear + '</span>';
+                    } else if (isTop5) {
+                        h += '<span style="color:var(--accent);font-size:0.75rem;font-weight:600">★ Top 5</span>';
+                    }
+                    h += '</td>';
+                    h += '</tr>';
+                });
+                
+                h += '</tbody></table></div></div>';
+            }
+            
+            // Potential Keepers Section
+            var potentialKeepers = picks.filter(function(p) { return p.is_potential_keeper; });
+            if (potentialKeepers.length > 0 && isKeeperDraft) {
+                potentialKeepers.sort(function(a, b) { return b.total_points - a.total_points; });
+                
+                h += '<div class="section-title" style="border-color:var(--accent);margin-top:2rem">🌟 Best Potential Keepers for ' + nextYear + '</div>';
+                h += '<div class="card"><div class="card-body" style="padding:0">';
+                h += '<table><thead><tr>';
+                h += '<th style="width:40px">#</th>';
+                h += '<th>Player</th>';
+                h += '<th style="width:60px">Pos</th>';
+                h += '<th style="width:80px">Rank</th>';
+                h += '<th>Drafted By</th>';
+                h += '<th style="width:100px">' + draftYear + ' Pts</th>';
+                h += '</tr></thead><tbody>';
+                
+                potentialKeepers.forEach(function(pick, idx) {
+                    h += '<tr style="background:rgba(0,255,136,0.08)">';
+                    h += '<td style="font-family:Oswald;text-align:center">' + (idx + 1) + '</td>';
+                    h += '<td style="font-weight:600">' + pick.player_name + '</td>';
+                    h += '<td style="text-align:center">' + pick.position + '</td>';
+                    h += '<td style="text-align:center;font-family:Oswald;color:var(--accent)">' + pick.position + pick.position_rank + ' ★</td>';
+                    h += '<td>' + pick.team_name + '</td>';
+                    h += '<td style="font-family:Oswald;text-align:center;color:var(--accent)">' + pick.total_points.toFixed(1) + '</td>';
+                    h += '</tr>';
+                });
+                
+                h += '</tbody></table></div></div>';
+            }
+            
+            // Draft by Team
+            h += '<div class="section-title" style="border-color:var(--accent);margin-top:2rem">👥 Draft Results by Team</div>';
+            
+            var picksByTeam = {};
+            picks.forEach(function(pick) {
+                if (!picksByTeam[pick.team_name]) picksByTeam[pick.team_name] = [];
+                picksByTeam[pick.team_name].push(pick);
+            });
+            
+            var teamList = Object.keys(picksByTeam).map(function(name) {
+                var totalPts = picksByTeam[name].reduce(function(sum, p) { return sum + (p.total_points || 0); }, 0);
+                return { name: name, picks: picksByTeam[name], totalPoints: totalPts };
+            }).sort(function(a, b) { return b.totalPoints - a.totalPoints; });
+            
+            h += '<div class="grid-2" style="gap:1rem">';
+            teamList.forEach(function(team, idx) {
+                h += '<div class="card">';
+                h += '<div class="card-header" style="display:flex;justify-content:space-between;align-items:center">';
+                h += '<span>' + (idx + 1) + '. ' + team.name + '</span>';
+                h += '<span style="font-family:Oswald;color:var(--accent)">' + team.totalPoints.toFixed(1) + ' pts</span>';
+                h += '</div>';
+                h += '<div class="card-body" style="padding:0">';
+                
+                team.picks.forEach(function(pick) {
+                    var pickStyle = pick.keeper ? 'background:rgba(255,215,0,0.15);' : (pick.is_potential_keeper ? 'background:rgba(0,255,136,0.1);' : '');
+                    h += '<div style="display:flex;justify-content:space-between;padding:0.4rem 0.75rem;border-bottom:1px solid var(--border);font-size:0.85rem;' + pickStyle + '">';
+                    h += '<span><span style="color:var(--text3);font-size:0.75rem">R' + pick.round + ':</span> ' + pick.player_name;
+                    if (pick.keeper) h += ' <span style="color:var(--gold)">🔒</span>';
+                    if (pick.is_potential_keeper) h += ' <span style="color:var(--accent)">🌟</span>';
+                    if (pick.ineligible_next_year) h += ' <span style="color:var(--danger)">*</span>';
+                    h += '</span>';
+                    h += '<span style="color:var(--text3)">' + pick.position;
+                    if (pick.position_rank > 0) {
+                        var rc = pick.position_rank <= 5 ? 'var(--accent)' : (pick.position_rank <= 12 ? 'var(--gold)' : 'var(--text3)');
+                        h += '<span style="color:' + rc + '">' + pick.position_rank + '</span>';
+                    }
+                    h += '</span></div>';
+                });
+                
+                h += '</div></div>';
+            });
+            h += '</div>';
+            
+            // Keeper rules
+            if (parseInt(draftYear) >= 2022) {
+                h += '<div class="card" style="margin-top:1.5rem"><div class="card-header">📜 Keeper Rules for ' + nextYear + '</div><div class="card-body">';
+                h += '<div style="color:var(--text2);font-size:0.85rem">';
+                h += '<p style="margin:0 0 0.75rem 0"><strong>Keeper Draft Format:</strong></p>';
+                h += '<ul style="margin:0 0 1rem 1.5rem;padding:0">';
+                h += '<li style="margin-bottom:0.5rem">Keepers are selected in Round 1 (Keeper Round)</li>';
+                h += '<li style="margin-bottom:0.5rem">Each team may keep one player from the previous season</li>';
+                h += '</ul>';
+                h += '<p style="margin:0 0 0.75rem 0"><strong>Players NOT Eligible to be Kept in ' + nextYear + ':</strong></p>';
+                h += '<ul style="margin:0 0 0 1.5rem;padding:0">';
+                h += '<li style="margin-bottom:0.5rem"><span style="color:var(--danger)">*</span> Players in the Keeper Round (Round 1) - they were already a keeper</li>';
+                if (parseInt(draftYear) >= 2023) {
+                    h += '<li style="margin-bottom:0.5rem"><span style="color:var(--danger)">*</span> Players in Round 2 (1st regular round) - first round picks are ineligible</li>';
+                }
+                h += '</ul>';
+                h += '<p style="margin:0 0 0.75rem 0"><strong>Best Keeper Candidates <span style="color:var(--accent)">🌟</span>:</strong></p>';
+                h += '<ul style="margin:0 0 0 1.5rem;padding:0">';
+                h += '<li>Top 5 at their position (QB, RB, WR, TE) AND eligible to be kept</li>';
+                h += '</ul>';
+                h += '</div></div></div>';
+            }
+            
+            return h;
+        }
+        
+        function recordCard(icon, title, records, pri, sec, val, bad) {
+            var h = '<div class="card"><div class="card-header">' + icon + ' ' + title + '</div><div class="card-body" style="padding:0">';
+            if (!records || records.length === 0) {
+                h += '<div style="padding:1rem;color:var(--text3)">No data</div>';
+            } else {
+                records.forEach(function(r, i) {
+                    var rc = i<3 ? ' r'+(i+1) : '';
+                    h += '<div class="record-row"><div class="rank'+rc+'">'+(i+1)+'</div><div><div class="record-primary">'+pri(r)+'</div><div class="record-secondary">'+sec(r)+'</div></div><div class="record-value'+(bad?' bad':'')+'">'+val(r)+'</div></div>';
+                });
+            }
+            h += '</div></div>';
+            return h;
+        }
+        
+        function recordCardWithHighlight(icon, title, records, pri, sec, val, bad, currentYear) {
+            var h = '<div class="card"><div class="card-header">' + icon + ' ' + title + '</div><div class="card-body" style="padding:0">';
+            if (!records || records.length === 0) {
+                h += '<div style="padding:1rem;color:var(--text3)">No data</div>';
+            } else {
+                records.forEach(function(r, i) {
+                    var rc = i<3 ? ' r'+(i+1) : '';
+                    var mgrs = (r.manager || '') + ',' + (r.winner || '') + ',' + (r.loser || '');
+                    var recordYear = r.year || '';
+                    var isCurrentYear = r.year == currentYear;
+                    var yearIndicator = isCurrentYear ? ' <span class="current-year-badge">★</span>' : '';
+                    h += '<div class="record-row record-row-item" data-managers="'+mgrs+'" data-year="'+recordYear+'"><div class="rank'+rc+'">'+(i+1)+'</div><div><div class="record-primary manager-name">'+pri(r)+yearIndicator+'</div><div class="record-secondary manager-name">'+sec(r)+'</div></div><div class="record-value'+(bad?' bad':'')+'">'+val(r)+'</div></div>';
+                });
+            }
+            h += '</div></div>';
+            return h;
+        }
+        
+        function alltimeCardWithHighlight(title, managers, val, bad) {
+            var h = '<div class="card"><div class="card-header">' + title + '</div><div class="card-body" style="padding:0">';
+            if (!managers || managers.length === 0) {
+                h += '<div style="padding:1rem;color:var(--text3)">No data</div>';
+            } else {
+                managers.slice(0,10).forEach(function(m, i) {
+                    var rc = i<3 ? ' r'+(i+1) : '';
+                    h += '<div class="alltime-row record-row-item" data-managers="'+m.name+'"><div class="rank'+rc+'">'+(i+1)+'</div><div class="manager-name">'+m.name+'</div><div class="record-value'+(bad?' bad':'')+'">'+val(m)+'</div></div>';
+                });
+            }
+            h += '</div></div>';
+            return h;
+        }
+        
+        function alltimeCard(title, managers, val, bad) {
+            var h = '<div class="card"><div class="card-header">' + title + '</div><div class="card-body" style="padding:0">';
+            if (!managers || managers.length === 0) {
+                h += '<div style="padding:1rem;color:var(--text3)">No data</div>';
+            } else {
+                managers.slice(0,10).forEach(function(m, i) {
+                    var rc = i<3 ? ' r'+(i+1) : '';
+                    h += '<div class="alltime-row record-row-item" data-managers="'+m.name+'"><div class="rank'+rc+'">'+(i+1)+'</div><div class="manager-name">'+m.name+'</div><div class="record-value'+(bad?' bad':'')+'">'+val(m)+'</div></div>';
+                });
+            }
+            h += '</div></div>';
+            return h;
+        }
+        
+        function alltimeCardWithSub(title, managers, val, subVal, bad) {
+            var h = '<div class="card"><div class="card-header">' + title + '</div><div class="card-body" style="padding:0">';
+            if (!managers || managers.length === 0) {
+                h += '<div style="padding:1rem;color:var(--text3)">No data</div>';
+            } else {
+                managers.slice(0,10).forEach(function(m, i) {
+                    var rc = i<3 ? ' r'+(i+1) : '';
+                    h += '<div class="alltime-row record-row-item" data-managers="'+m.name+'" style="grid-template-columns:25px 1fr auto">';
+                    h += '<div class="rank'+rc+'">'+(i+1)+'</div>';
+                    h += '<div class="manager-name">'+m.name+'</div>';
+                    h += '<div style="text-align:right"><div class="record-value'+(bad?' bad':'')+'" style="margin:0">'+val(m)+'</div>';
+                    h += '<div style="font-size:0.7rem;color:var(--text3)">'+subVal(m)+'</div></div>';
+                    h += '</div>';
+                });
+            }
+            h += '</div></div>';
+            return h;
+        }
+        
+        // Card functions with descriptions
+        function recordCardWithDesc(icon, title, desc, records, pri, sec, val, bad, currentYear) {
+            var h = '<div class="card"><div class="card-header">' + icon + ' ' + title + '</div>';
+            h += '<div style="padding:0.5rem 1rem;font-size:0.75rem;color:var(--text3);background:var(--bg2);border-bottom:1px solid var(--border)">' + desc + '</div>';
+            h += '<div class="card-body" style="padding:0">';
+            if (!records || records.length === 0) {
+                h += '<div style="padding:1rem;color:var(--text3)">No data</div>';
+            } else {
+                records.forEach(function(r, i) {
+                    var rc = i<3 ? ' r'+(i+1) : '';
+                    var mgrs = (r.manager || '') + ',' + (r.winner || '') + ',' + (r.loser || '');
+                    var recordYear = r.year || '';
+                    var isCurrentYear = r.year == currentYear;
+                    var yearIndicator = isCurrentYear ? ' <span class="current-year-badge">★</span>' : '';
+                    h += '<div class="record-row record-row-item" data-managers="'+mgrs+'" data-year="'+recordYear+'"><div class="rank'+rc+'">'+(i+1)+'</div><div><div class="record-primary manager-name">'+pri(r)+yearIndicator+'</div><div class="record-secondary manager-name">'+sec(r)+'</div></div><div class="record-value'+(bad?' bad':'')+'">'+val(r)+'</div></div>';
+                });
+            }
+            h += '</div></div>';
+            return h;
+        }
+        
+        function alltimeCardWithDesc(title, desc, managers, val, bad) {
+            var h = '<div class="card"><div class="card-header">' + title + '</div>';
+            h += '<div style="padding:0.5rem 1rem;font-size:0.75rem;color:var(--text3);background:var(--bg2);border-bottom:1px solid var(--border)">' + desc + '</div>';
+            h += '<div class="card-body" style="padding:0">';
+            if (!managers || managers.length === 0) {
+                h += '<div style="padding:1rem;color:var(--text3)">No data</div>';
+            } else {
+                managers.slice(0,10).forEach(function(m, i) {
+                    var rc = i<3 ? ' r'+(i+1) : '';
+                    h += '<div class="alltime-row record-row-item" data-managers="'+m.name+'"><div class="rank'+rc+'">'+(i+1)+'</div><div class="manager-name">'+m.name+'</div><div class="record-value'+(bad?' bad':'')+'">'+val(m)+'</div></div>';
+                });
+            }
+            h += '</div></div>';
+            return h;
+        }
+        
+        function alltimeCardWithSubDesc(title, desc, managers, val, subVal, bad) {
+            var h = '<div class="card"><div class="card-header">' + title + '</div>';
+            h += '<div style="padding:0.5rem 1rem;font-size:0.75rem;color:var(--text3);background:var(--bg2);border-bottom:1px solid var(--border)">' + desc + '</div>';
+            h += '<div class="card-body" style="padding:0">';
+            if (!managers || managers.length === 0) {
+                h += '<div style="padding:1rem;color:var(--text3)">No data</div>';
+            } else {
+                managers.slice(0,10).forEach(function(m, i) {
+                    var rc = i<3 ? ' r'+(i+1) : '';
+                    h += '<div class="alltime-row record-row-item" data-managers="'+m.name+'" style="grid-template-columns:25px 1fr auto">';
+                    h += '<div class="rank'+rc+'">'+(i+1)+'</div>';
+                    h += '<div class="manager-name">'+m.name+'</div>';
+                    h += '<div style="text-align:right"><div class="record-value'+(bad?' bad':'')+'" style="margin:0">'+val(m)+'</div>';
+                    h += '<div style="font-size:0.7rem;color:var(--text3)">'+subVal(m)+'</div></div>';
+                    h += '</div>';
+                });
+            }
+            h += '</div></div>';
+            return h;
+        }
+        
+        function showTradeDetail(idx) {
+            var t = window.currentTrades[idx];
+            if (!t) return;
+            
+            var h = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">';
+            
+            // Team 1 breakdown
+            h += '<div>';
+            h += '<div style="font-weight:600;font-size:1.1rem;margin-bottom:0.75rem;color:' + (t.team1_score >= 0 ? 'var(--accent)' : 'var(--danger)') + '">';
+            h += t.team1 + ': ' + (t.team1_score >= 0 ? '+' : '') + t.team1_score.toFixed(1) + ' pts</div>';
+            
+            // Acquired players breakdown
+            h += '<div style="margin-bottom:1rem">';
+            h += '<div style="font-size:0.8rem;color:var(--text3);text-transform:uppercase;margin-bottom:0.5rem">Players Acquired (Points Gained)</div>';
+            var details1 = t.team1_details || {};
+            var acquired1 = details1.acquired_breakdown || [];
+            if (acquired1.length === 0) {
+                h += '<div style="color:var(--text3);font-size:0.85rem">No data available</div>';
+            } else {
+                acquired1.forEach(function(p) {
+                    h += '<div style="background:var(--bg3);padding:0.75rem;border-radius:4px;margin-bottom:0.5rem">';
+                    h += '<div style="display:flex;justify-content:space-between;align-items:center">';
+                    h += '<span style="font-weight:600">' + p.player_name + '</span>';
+                    h += '<span style="font-family:Oswald;color:var(--accent)">+' + p.total_points.toFixed(1) + '</span>';
+                    h += '</div>';
+                    h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">';
+                    h += 'Started ' + p.weeks_started + ' week(s)';
+                    if (p.end_reason === 'traded_again') h += ' • Traded again';
+                    h += '</div>';
+                    if (p.weekly_points && p.weekly_points.length > 0) {
+                        h += '<div style="font-size:0.75rem;margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.25rem">';
+                        p.weekly_points.forEach(function(wp) {
+                            h += '<span style="background:var(--bg4);padding:0.15rem 0.4rem;border-radius:3px">Wk' + wp.week + ': ' + wp.points.toFixed(1) + '</span>';
+                        });
+                        h += '</div>';
+                    } else {
+                        h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem;font-style:italic">No starting points recorded</div>';
+                    }
+                    h += '</div>';
+                });
+            }
+            h += '</div>';
+            
+            // Traded away players breakdown
+            h += '<div>';
+            h += '<div style="font-size:0.8rem;color:var(--text3);text-transform:uppercase;margin-bottom:0.5rem">Players Traded Away (Points Lost)</div>';
+            var tradedAway1 = details1.traded_away_breakdown || [];
+            if (tradedAway1.length === 0) {
+                h += '<div style="color:var(--text3);font-size:0.85rem">No data available</div>';
+            } else {
+                tradedAway1.forEach(function(p) {
+                    h += '<div style="background:var(--bg3);padding:0.75rem;border-radius:4px;margin-bottom:0.5rem">';
+                    h += '<div style="display:flex;justify-content:space-between;align-items:center">';
+                    h += '<span style="font-weight:600">' + p.player_name + '</span>';
+                    h += '<span style="font-family:Oswald;color:var(--danger)">-' + p.total_points.toFixed(1) + '</span>';
+                    h += '</div>';
+                    h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">';
+                    h += 'Started ' + p.weeks_started + ' week(s) for ' + (p.receiving_team || 'other team');
+                    if (p.end_reason === 'traded_again') h += ' • Traded again';
+                    h += '</div>';
+                    if (p.weekly_points && p.weekly_points.length > 0) {
+                        h += '<div style="font-size:0.75rem;margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.25rem">';
+                        p.weekly_points.forEach(function(wp) {
+                            h += '<span style="background:var(--bg4);padding:0.15rem 0.4rem;border-radius:3px">Wk' + wp.week + ': ' + wp.points.toFixed(1) + '</span>';
+                        });
+                        h += '</div>';
+                    } else {
+                        h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem;font-style:italic">No starting points recorded</div>';
+                    }
+                    h += '</div>';
+                });
+            }
+            h += '</div>';
+            h += '</div>';
+            
+            // Team 2 breakdown
+            h += '<div>';
+            h += '<div style="font-weight:600;font-size:1.1rem;margin-bottom:0.75rem;color:' + (t.team2_score >= 0 ? 'var(--accent)' : 'var(--danger)') + '">';
+            h += t.team2 + ': ' + (t.team2_score >= 0 ? '+' : '') + t.team2_score.toFixed(1) + ' pts</div>';
+            
+            // Acquired players breakdown
+            h += '<div style="margin-bottom:1rem">';
+            h += '<div style="font-size:0.8rem;color:var(--text3);text-transform:uppercase;margin-bottom:0.5rem">Players Acquired (Points Gained)</div>';
+            var details2 = t.team2_details || {};
+            var acquired2 = details2.acquired_breakdown || [];
+            if (acquired2.length === 0) {
+                h += '<div style="color:var(--text3);font-size:0.85rem">No data available</div>';
+            } else {
+                acquired2.forEach(function(p) {
+                    h += '<div style="background:var(--bg3);padding:0.75rem;border-radius:4px;margin-bottom:0.5rem">';
+                    h += '<div style="display:flex;justify-content:space-between;align-items:center">';
+                    h += '<span style="font-weight:600">' + p.player_name + '</span>';
+                    h += '<span style="font-family:Oswald;color:var(--accent)">+' + p.total_points.toFixed(1) + '</span>';
+                    h += '</div>';
+                    h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">';
+                    h += 'Started ' + p.weeks_started + ' week(s)';
+                    if (p.end_reason === 'traded_again') h += ' • Traded again';
+                    h += '</div>';
+                    if (p.weekly_points && p.weekly_points.length > 0) {
+                        h += '<div style="font-size:0.75rem;margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.25rem">';
+                        p.weekly_points.forEach(function(wp) {
+                            h += '<span style="background:var(--bg4);padding:0.15rem 0.4rem;border-radius:3px">Wk' + wp.week + ': ' + wp.points.toFixed(1) + '</span>';
+                        });
+                        h += '</div>';
+                    } else {
+                        h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem;font-style:italic">No starting points recorded</div>';
+                    }
+                    h += '</div>';
+                });
+            }
+            h += '</div>';
+            
+            // Traded away players breakdown
+            h += '<div>';
+            h += '<div style="font-size:0.8rem;color:var(--text3);text-transform:uppercase;margin-bottom:0.5rem">Players Traded Away (Points Lost)</div>';
+            var tradedAway2 = details2.traded_away_breakdown || [];
+            if (tradedAway2.length === 0) {
+                h += '<div style="color:var(--text3);font-size:0.85rem">No data available</div>';
+            } else {
+                tradedAway2.forEach(function(p) {
+                    h += '<div style="background:var(--bg3);padding:0.75rem;border-radius:4px;margin-bottom:0.5rem">';
+                    h += '<div style="display:flex;justify-content:space-between;align-items:center">';
+                    h += '<span style="font-weight:600">' + p.player_name + '</span>';
+                    h += '<span style="font-family:Oswald;color:var(--danger)">-' + p.total_points.toFixed(1) + '</span>';
+                    h += '</div>';
+                    h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">';
+                    h += 'Started ' + p.weeks_started + ' week(s) for ' + (p.receiving_team || 'other team');
+                    if (p.end_reason === 'traded_again') h += ' • Traded again';
+                    h += '</div>';
+                    if (p.weekly_points && p.weekly_points.length > 0) {
+                        h += '<div style="font-size:0.75rem;margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.25rem">';
+                        p.weekly_points.forEach(function(wp) {
+                            h += '<span style="background:var(--bg4);padding:0.15rem 0.4rem;border-radius:3px">Wk' + wp.week + ': ' + wp.points.toFixed(1) + '</span>';
+                        });
+                        h += '</div>';
+                    } else {
+                        h += '<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem;font-style:italic">No starting points recorded</div>';
+                    }
+                    h += '</div>';
+                });
+            }
+            h += '</div>';
+            h += '</div>';
+            
+            h += '</div>';
+            
+            document.getElementById('modalTitle').textContent = 'Trade Details - Week ' + t.week;
+            document.getElementById('modalBody').innerHTML = h;
+            document.getElementById('modal').classList.add('active');
+        }
+    </script>
+</body>
+</html>
