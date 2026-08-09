@@ -118,10 +118,6 @@
         .banner-manager{font-family:'Oswald',sans-serif;font-size:1.1rem;margin-top:0.5rem}
         .banner-team{font-size:0.8rem;color:var(--text2);font-style:italic;margin-top:0.15rem;min-height:1.1em;overflow-wrap:anywhere}
         .banner-record{font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;color:var(--gold);margin-top:0.35rem}
-        .bio-block{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;padding:1.5rem 1.75rem;margin-bottom:2rem;color:var(--text2);line-height:1.65}
-        .bio-block p{margin-bottom:0.9rem}
-        .bio-block p:last-child{margin-bottom:0}
-        .bio-block .bio-placeholder{color:var(--text3);font-style:italic}
         .glance-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:2rem}
         .glance-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:0.9rem 1.1rem}
         .glance-label{font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:0.35rem}
@@ -202,25 +198,6 @@
         </div>
     </div>
     <script>
-        /* ==================================================================
-           LEAGUE BIOGRAPHY - WRITE YOUR OWN TEXT HERE
-           ------------------------------------------------------------------
-           Each string below becomes one paragraph on the Home page, in order.
-           Add, remove or reorder paragraphs freely. Basic HTML works inside
-           the quotes (<strong>bold</strong>, <em>italic</em>, <a href="...">link</a>).
-           Watch the quotes: write it\'s as it\\'s, or just use double quotes.
-           Leave the array empty ([]) and the page shows a placeholder instead.
-           ================================================================== */
-        var LEAGUE_BIO = [
-            // "Paragraph one goes here - how the league started, who founded it, the original crew.",
-            // "Paragraph two - traditions, the trophy, the punishment, the group chat lore.",
-            // "Paragraph three - where things stand today."
-        ];
-
-        /* Optional one-line tagline shown under the LEAGUE HISTORY heading on the
-           Home page. Set to '' to hide it. */
-        var LEAGUE_TAGLINE = '';
-
         var data = null;
         var year = null;
         var teamId = null;
@@ -450,20 +427,6 @@
                 h += '</div>';
             });
             if (!anyBanner) h += '<div style="color:var(--text3)">No completed seasons yet.</div>';
-            h += '</div>';
-
-            /* ---- League biography (edit LEAGUE_BIO at the top of this script) ---- */
-            h += '<div class="section-title" style="border-color:var(--accent)">📜 About the League'
-               + (LEAGUE_TAGLINE ? ' <span style="font-size:0.8rem;font-weight:400;color:var(--text2);text-transform:none">' + esc(LEAGUE_TAGLINE) + '</span>' : '')
-               + '</div>';
-            h += '<div class="bio-block">';
-            if (LEAGUE_BIO && LEAGUE_BIO.length) {
-                LEAGUE_BIO.forEach(function(p) { h += '<p>' + p + '</p>'; });
-            } else {
-                h += '<p class="bio-placeholder">Your league bio goes here. Open this file, find the '
-                   + '<strong>LEAGUE_BIO</strong> array near the top of the &lt;script&gt; block, and '
-                   + 'uncomment / replace the example paragraphs with your own.</p>';
-            }
             h += '</div>';
 
             /* ---- League at a glance ---- */
