@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root{--bg:#0a0f0d;--bg2:#111916;--bg3:#151d19;--bg4:#1a2420;--accent:#00ff87;--gold:#ffd700;--silver:#c0c0c0;--bronze:#cd7f32;--text:#fff;--text2:#8a9a91;--text3:#4a5a51;--border:#2a3a31;--danger:#ff4757;--warn:#ffa502}
+        :root{--bg:#0a0f0d;--bg2:#111916;--bg3:#151d19;--bg4:#1a2420;--accent:#00ff87;--gold:#ffd700;--silver:#c0c0c0;--bronze:#cd7f32;--text:#fff;--text1:#fff;--text2:#8a9a91;--text3:#4a5a51;--border:#2a3a31;--danger:#ff4757;--warn:#ffa502}
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
         .header{background:var(--bg2);border-bottom:1px solid var(--border);padding:1.5rem 2rem}
@@ -107,6 +107,57 @@
         .roster-player.bench{opacity:0.5}
         .pos-badge{display:inline-block;padding:0.1rem 0.3rem;border-radius:3px;font-size:0.65rem;font-weight:700;margin-right:0.5rem;color:#fff}
         .pos-badge.qb{background:#e84393}.pos-badge.rb{background:#00b894}.pos-badge.wr{background:#0984e3}.pos-badge.te{background:#fdcb6e;color:#333}.pos-badge.k{background:#a29bfe}.pos-badge.d-st{background:#636e72}
+        .grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem}
+
+        /* ---------- Home page ---------- */
+        .banner-rail{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+        .banner{position:relative;background:linear-gradient(170deg,#241f05 0%,var(--bg3) 55%);border:1px solid var(--gold);border-radius:10px 10px 0 0;padding:1.25rem 1rem 2.25rem;text-align:center;overflow:hidden}
+        .banner::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.5rem;background:var(--bg);clip-path:polygon(0 100%,0 0,50% 100%,100% 0,100% 100%)}
+        .banner-year{font-family:'Oswald',sans-serif;font-size:1.75rem;font-weight:700;color:var(--gold);line-height:1}
+        .banner-label{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:0.4rem}
+        .banner-manager{font-family:'Oswald',sans-serif;font-size:1.1rem;margin-top:0.5rem}
+        .banner-team{font-size:0.8rem;color:var(--text2);font-style:italic;margin-top:0.15rem;min-height:1.1em;overflow-wrap:anywhere}
+        .banner-record{font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;color:var(--gold);margin-top:0.35rem}
+        .bio-block{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:12px;padding:1.5rem 1.75rem;margin-bottom:2rem;color:var(--text2);line-height:1.65}
+        .bio-block p{margin-bottom:0.9rem}
+        .bio-block p:last-child{margin-bottom:0}
+        .bio-block .bio-placeholder{color:var(--text3);font-style:italic}
+        .glance-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:2rem}
+        .glance-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:0.9rem 1.1rem}
+        .glance-label{font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:0.35rem}
+        .glance-value{font-size:0.95rem;color:var(--text)}
+        .glance-value .glance-years{color:var(--text3);font-size:0.8rem}
+        .glance-value div+div{margin-top:0.25rem}
+        .medal{font-family:'Oswald',sans-serif;font-weight:700}
+        .medal.g{color:var(--gold)}.medal.s{color:var(--silver)}.medal.b{color:var(--bronze)}
+
+        /* ---------- Trophy case ---------- */
+        .trophy-case{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0.85rem}
+        .trophy{border-radius:8px;padding:0.85rem 1rem;border:1px solid var(--border);background:var(--bg3)}
+        .trophy.title{border-color:var(--gold);background:linear-gradient(135deg,rgba(255,215,0,0.14),var(--bg3))}
+        .trophy.division{border-color:var(--accent);background:linear-gradient(135deg,rgba(0,255,135,0.12),var(--bg3))}
+        .trophy.runner{border-color:var(--silver);background:linear-gradient(135deg,rgba(192,192,192,0.12),var(--bg3))}
+        .trophy-kind{font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3)}
+        .trophy-year{font-family:'Oswald',sans-serif;font-size:1.35rem;font-weight:700}
+        .trophy.title .trophy-year{color:var(--gold)}
+        .trophy.division .trophy-year{color:var(--accent)}
+        .trophy.runner .trophy-year{color:var(--silver)}
+        .trophy-sub{font-size:0.8rem;color:var(--text2)}
+        .trophy-empty{color:var(--text3);font-style:italic;padding:1rem}
+
+        /* ---------- Sortable all-time table ---------- */
+        .sort-table-wrap{overflow-x:auto}
+        table.sortable th{white-space:nowrap;cursor:pointer;user-select:none}
+        table.sortable th:hover{color:var(--accent)}
+        table.sortable th.sorted{color:var(--accent)}
+        table.sortable th .arrow{opacity:0.35;margin-left:0.25rem;font-size:0.7rem}
+        table.sortable th.sorted .arrow{opacity:1}
+        table.sortable td{white-space:nowrap;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;text-align:right}
+        table.sortable td.mgr{text-align:left;font-family:'Barlow',sans-serif;font-weight:600;position:sticky;left:0;background:var(--bg3);z-index:1}
+        table.sortable tr:hover td{background:var(--bg4);cursor:default}
+        table.sortable tr:hover td.mgr{background:var(--bg4)}
+        table.sortable td.lead{color:var(--gold);font-weight:700}
+        .table-note{color:var(--text3);font-size:0.78rem;margin:0.5rem 0 1.5rem}
     </style>
 </head>
 <body>
@@ -116,7 +167,8 @@
     </header>
     <nav class="nav">
         <div class="nav-tabs">
-            <button class="nav-tab active" data-tab="seasons">Seasons</button>
+            <button class="nav-tab active" data-tab="home">Home</button>
+            <button class="nav-tab" data-tab="seasons">Seasons</button>
             <button class="nav-tab" data-tab="biography">Biography</button>
             <button class="nav-tab" data-tab="trades">Trade Analyzer</button>
             <button class="nav-tab" data-tab="draft">Draft Analyzer</button>
@@ -150,12 +202,31 @@
         </div>
     </div>
     <script>
+        /* ==================================================================
+           LEAGUE BIOGRAPHY - WRITE YOUR OWN TEXT HERE
+           ------------------------------------------------------------------
+           Each string below becomes one paragraph on the Home page, in order.
+           Add, remove or reorder paragraphs freely. Basic HTML works inside
+           the quotes (<strong>bold</strong>, <em>italic</em>, <a href="...">link</a>).
+           Watch the quotes: write it\'s as it\\'s, or just use double quotes.
+           Leave the array empty ([]) and the page shows a placeholder instead.
+           ================================================================== */
+        var LEAGUE_BIO = [
+            // "Paragraph one goes here - how the league started, who founded it, the original crew.",
+            // "Paragraph two - traditions, the trophy, the punishment, the group chat lore.",
+            // "Paragraph three - where things stand today."
+        ];
+
+        /* Optional one-line tagline shown under the LEAGUE HISTORY heading on the
+           Home page. Set to '' to hide it. */
+        var LEAGUE_TAGLINE = '';
+
         var data = null;
         var year = null;
         var teamId = null;
-        var tab = 'seasons';
+        var tab = 'home';
         var chart = null;
-        
+
         document.getElementById('fileInput').onchange = function(e) {
             var file = e.target.files[0];
             if (!file) return;
@@ -262,7 +333,9 @@
                 selectors.style.display = 'none';
             }
             
-            if (tab === 'records') {
+            if (tab === 'home') {
+                renderHome();
+            } else if (tab === 'records') {
                 renderRecords();
             } else if (tab === 'trades') {
                 renderTrades();
@@ -277,6 +350,246 @@
             }
         }
         
+        /* ============================ HOME PAGE ============================ */
+
+        function esc(v) {
+            return String(v == null ? '' : v).replace(/[&<>"]/g, function(c) {
+                return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+            });
+        }
+
+        // All seasons, oldest first, as {year, season} pairs.
+        function seasonList() {
+            return Object.keys(data.seasons).map(Number).sort(function(a,b){return a-b;})
+                .map(function(y) { return {year: y, season: data.seasons[y]}; });
+        }
+
+        function teamsOf(s) { return Object.keys(s.teams).map(function(k){ return s.teams[k]; }); }
+
+        // Final standings order, best first.
+        function standingsOrder(s) {
+            return teamsOf(s).slice().sort(function(a,b) {
+                return (a.final_standing||99)-(b.final_standing||99) || b.wins-a.wins || b.points_for-a.points_for;
+            });
+        }
+
+        // Regular season order, best record first (PF breaks ties) - the same ordering
+        // the Seasons tab uses, so "last place" means the same thing everywhere.
+        function regSeasonOrder(s) {
+            return teamsOf(s).slice().sort(function(a,b) {
+                return b.wins-a.wins || b.points_for-a.points_for;
+            });
+        }
+
+        // Collapse a sorted year list into "2020", "2020-2021", "2020, 2023-2025".
+        function yearRangeLabel(years) {
+            var out = [], start = years[0], prev = years[0];
+            for (var i = 1; i <= years.length; i++) {
+                if (i < years.length && years[i] === prev + 1) { prev = years[i]; continue; }
+                out.push(start === prev ? String(start) : start + '–' + prev);
+                start = prev = years[i];
+            }
+            return out.join(', ');
+        }
+
+        // Build one "League at a Glance" cell. getter(season, year) returns a display
+        // string (or null to skip that year); identical values are merged and tagged
+        // with the years they applied to.
+        function glanceItem(label, getter) {
+            var groups = [];
+            seasonList().forEach(function(e) {
+                var v = getter(e.season, e.year);
+                if (v == null || v === '') return;
+                var g = groups.filter(function(x){ return x.value === v; })[0];
+                if (!g) { g = {value: v, years: []}; groups.push(g); }
+                g.years.push(e.year);
+            });
+            if (!groups.length) return '';
+
+            var allYears = seasonList().map(function(e){ return e.year; });
+            var h = '<div class="glance-item"><div class="glance-label">' + esc(label) + '</div><div class="glance-value">';
+            groups.forEach(function(g) {
+                // Only annotate the years when the rule actually changed at some point.
+                var showYears = groups.length > 1 || g.years.length !== allYears.length;
+                h += '<div>' + g.value +
+                     (showYears ? ' <span class="glance-years">(' + yearRangeLabel(g.years) + ')</span>' : '') +
+                     '</div>';
+            });
+            return h + '</div></div>';
+        }
+
+        // Number of first-round byes, read off the actual bracket rather than assumed.
+        function firstRoundByes(s) {
+            var rounds = (s.brackets && s.brackets.championship && s.brackets.championship.rounds) || {};
+            var first = rounds['1'];
+            if (!first) return null;
+            return first.filter(function(m){ return !m.away; }).length;
+        }
+
+        function renderHome() {
+            var seasons = seasonList();
+            var newestFirst = seasons.slice().reverse();
+
+            var h = '';
+
+            /* ---- Champion banners ---- */
+            h += '<div class="section-title" style="border-color:var(--gold);margin-top:0">🏆 Championship Banners</div>';
+            h += '<div class="banner-rail">';
+            var anyBanner = false;
+            newestFirst.forEach(function(e) {
+                if (!(e.season.season_status && e.season.season_status.is_complete)) return;
+                var champ = standingsOrder(e.season)[0];
+                if (!champ || champ.final_standing !== 1) return;
+                anyBanner = true;
+                h += '<div class="banner">';
+                h += '<div class="banner-label">Champion</div>';
+                h += '<div class="banner-year">' + e.year + '</div>';
+                h += '<div class="banner-manager">' + esc(champ.display_name) + '</div>';
+                h += '<div class="banner-team">' + (champ.name ? '“' + esc(champ.name) + '”' : '') + '</div>';
+                h += '<div class="banner-record">' + champ.wins + '-' + champ.losses + ' regular season</div>';
+                h += '</div>';
+            });
+            if (!anyBanner) h += '<div style="color:var(--text3)">No completed seasons yet.</div>';
+            h += '</div>';
+
+            /* ---- League biography (edit LEAGUE_BIO at the top of this script) ---- */
+            h += '<div class="section-title" style="border-color:var(--accent)">📜 About the League'
+               + (LEAGUE_TAGLINE ? ' <span style="font-size:0.8rem;font-weight:400;color:var(--text2);text-transform:none">' + esc(LEAGUE_TAGLINE) + '</span>' : '')
+               + '</div>';
+            h += '<div class="bio-block">';
+            if (LEAGUE_BIO && LEAGUE_BIO.length) {
+                LEAGUE_BIO.forEach(function(p) { h += '<p>' + p + '</p>'; });
+            } else {
+                h += '<p class="bio-placeholder">Your league bio goes here. Open this file, find the '
+                   + '<strong>LEAGUE_BIO</strong> array near the top of the &lt;script&gt; block, and '
+                   + 'uncomment / replace the example paragraphs with your own.</p>';
+            }
+            h += '</div>';
+
+            /* ---- League at a glance ---- */
+            var yrs = seasons.map(function(e){ return e.year; });
+            h += '<div class="section-title">📋 League at a Glance '
+               + '<span style="font-size:0.8rem;font-weight:400;color:var(--text3);text-transform:none">'
+               + yrs[0] + '–' + yrs[yrs.length-1] + '</span></div>';
+            h += '<div class="glance-grid">';
+
+            h += glanceItem('Teams', function(s) { return teamsOf(s).length + ' managers'; });
+
+            h += glanceItem('Divisions', function(s) {
+                var d = (s.settings && s.settings.divisions) || [];
+                if (!d.length) return null;
+                return d.length + ' divisions — ' + d.map(function(x){ return esc(x.name); }).join(' / ');
+            });
+
+            h += glanceItem('Regular Season', function(s) {
+                return (s.regular_season_weeks || (s.settings && s.settings.regular_season_weeks)) + ' weeks';
+            });
+
+            h += glanceItem('Playoffs', function(s) {
+                var n = s.playoff_teams || (s.settings && s.settings.playoff_teams);
+                if (!n) return null;
+                var byes = firstRoundByes(s);
+                var len = (s.settings && s.settings.playoff_matchup_weeks) || 1;
+                return n + ' teams · ' + len + '-week rounds'
+                     + (byes ? ' · top ' + byes + ' seeds get a bye' : '');
+            });
+
+            h += glanceItem('Playoff Seeding Tiebreak', function(s) {
+                var r = s.settings && s.settings.playoff_seeding_rule;
+                if (!r) return null;
+                return r === 'TOTAL_POINTS_SCORED' ? 'Total points scored' : esc(r.replace(/_/g,' ').toLowerCase());
+            });
+
+            h += glanceItem('Scoring', function(s) {
+                var st = s.settings; if (!st) return null;
+                var parts = [];
+                if (st.scoring_type === 'H2H_POINTS') parts.push('Head-to-head points');
+                else if (st.scoring_type) parts.push(esc(st.scoring_type.replace(/_/g,' ')));
+                if (st.points_per_reception != null) {
+                    parts.push(st.points_per_reception === 1 ? 'Full PPR'
+                             : st.points_per_reception === 0.5 ? 'Half PPR'
+                             : st.points_per_reception === 0 ? 'Standard (no PPR)'
+                             : st.points_per_reception + ' per reception');
+                }
+                if (st.points_per_pass_td != null) parts.push(st.points_per_pass_td + '-pt passing TD');
+                return parts.join(' · ');
+            });
+
+            h += glanceItem('Starting Lineup', function(s) {
+                var l = s.settings && s.settings.starting_lineup;
+                return (l && l.length) ? l.join(', ') : null;
+            });
+
+            h += glanceItem('Bench & IR', function(s) {
+                var st = s.settings; if (!st) return null;
+                return st.bench_slots + ' bench · ' + st.ir_slots + ' IR · ' + st.roster_size + ' total spots';
+            });
+
+            h += glanceItem('Draft', function(s, y) {
+                var st = s.settings; if (!st) return null;
+                var d = data.drafts && data.drafts[y];
+                var type = st.draft_type === 'SNAKE' ? 'Snake' : esc(st.draft_type || 'Draft');
+                return type + (d && d.num_rounds ? ' · ' + d.num_rounds + ' rounds' : '');
+            });
+
+            h += glanceItem('Keepers', function(s) {
+                var st = s.settings; if (!st) return null;
+                return st.keeper_count ? st.keeper_count + ' keeper' + (st.keeper_count > 1 ? 's' : '')
+                                       : 'None — full redraft';
+            });
+
+            h += glanceItem('Waivers', function(s) {
+                var st = s.settings; if (!st) return null;
+                var type = st.acquisition_type === 'WAIVERS_TRADITIONAL' ? 'Traditional waivers'
+                         : esc((st.acquisition_type || '').replace(/_/g,' '));
+                return type + (st.waiver_hours ? ' · ' + st.waiver_hours + '-hour claim period' : '');
+            });
+
+            h += glanceItem('Trades', function(s) {
+                var st = s.settings; if (!st) return null;
+                var parts = [];
+                if (st.trade_review_hours != null) parts.push(st.trade_review_hours + '-hour review');
+                if (st.trade_veto_votes != null) parts.push(st.trade_veto_votes + ' votes to veto');
+                return parts.length ? parts.join(' · ') : null;
+            });
+
+            h += '</div>';
+
+            /* ---- Podiums ---- */
+            h += '<div class="section-title" style="border-color:var(--gold)">🥇 Podium by Season</div>';
+            h += '<div class="card"><div class="card-body" style="padding:0;overflow-x:auto"><table><thead><tr>';
+            h += '<th>Year</th><th>🥇 Champion</th><th>🥈 Runner-Up</th><th>🥉 Third</th><th>🚽 Last Place (Reg. Season)</th>';
+            h += '</tr></thead><tbody>';
+            newestFirst.forEach(function(e) {
+                var order = standingsOrder(e.season);
+                var complete = e.season.season_status && e.season.season_status.is_complete;
+                var reg = regSeasonOrder(e.season);
+                var last = reg[reg.length-1];
+
+                function cell(t, cls) {
+                    if (!complete || !t) return '<td style="color:var(--text3)">TBD</td>';
+                    return '<td><span class="medal ' + cls + '">' + esc(t.display_name) + '</span>'
+                         + '<div style="font-size:0.75rem;color:var(--text3)">'
+                         + (t.name ? esc(t.name) + ' · ' : '') + t.wins + '-' + t.losses + '</div></td>';
+                }
+
+                h += '<tr>';
+                h += '<td style="font-family:Oswald;font-size:1.05rem">' + e.year + '</td>';
+                h += cell(order[0], 'g');
+                h += cell(order[1], 's');
+                h += cell(order[2], 'b');
+                h += '<td><span style="color:var(--danger);font-family:Oswald;font-weight:700">' + esc(last.display_name) + '</span>'
+                   + '<div style="font-size:0.75rem;color:var(--text3)">'
+                   + (last.name ? esc(last.name) + ' · ' : '') + last.wins + '-' + last.losses + '</div></td>';
+                h += '</tr>';
+            });
+            h += '</tbody></table></div></div>';
+            h += '<div class="table-note">Champion, runner-up and third place come from the final playoff standings. '
+               + 'Last place is the worst regular season record (total points breaks ties), not the consolation bracket result.</div>';
+
+            document.getElementById('main').innerHTML = h;
+        }
+
         function renderOverview() {
             var s = data.seasons[year];
             if (!s) return;
@@ -659,11 +972,11 @@
             h += recordCardWithDesc('😬', 'Most Games Lost to Lineup', 'Games lost where optimal lineup would have won', seasonal.most_games_lost, function(x){return x.manager}, function(x){return x.year+' Season'}, function(x){return x.value}, true, currentYear);
             h += recordCardWithDesc('🎯', 'Highest Points Against (Season)', 'Most points scored by opponents in a season', seasonal.highest_points_against, function(x){return x.manager}, function(x){return x.year+' Season'}, function(x){return x.value.toFixed(1)}, true, currentYear);
             if (seasonal.most_chugs_season) {
-                h += recordCardWithDesc('🍺', 'Most Chugs (Season)', 'Most starter slots with 0 or fewer points', seasonal.most_chugs_season, function(x){return x.manager}, function(x){return x.year+' Season'}, function(x){return x.value}, true, currentYear);
+                h += recordCardWithDesc('🍺', 'Most Chugs (Season)', 'Most started skill players (QB/RB/WR/TE/FLEX) who scored 0 or fewer', seasonal.most_chugs_season, function(x){return x.manager}, function(x){return x.year+' Season'}, function(x){return x.value}, true, currentYear);
             }
             // Best Seasons (Regular Season Points)
             if (seasonal.best_seasons) {
-                h += recordCardWithDesc('🚀', 'Best Season (Reg Pts)', 'Highest total points in regular season', seasonal.best_seasons, function(x){return x.manager}, function(x){return x.year+' ('+x.record+') • '+(x.value/14).toFixed(1)+' pts/wk'}, function(x){return x.value.toFixed(1)}, false, currentYear);
+                h += recordCardWithDesc('🚀', 'Best Season (Reg Pts)', 'Highest total points in regular season', seasonal.best_seasons, function(x){return x.manager}, function(x){var wk=(data.seasons[x.year]&&data.seasons[x.year].regular_season_weeks)||14;return x.year+' ('+x.record+') • '+(x.value/wk).toFixed(1)+' pts/wk'}, function(x){return x.value.toFixed(1)}, false, currentYear);
             }
             // Best Postseasons
             if (seasonal.best_postseasons) {
@@ -678,43 +991,11 @@
             }
             h += '</div>';
             
-            h += '<div class="section-title" style="border-color:var(--accent);margin-top:2rem">👑 All-Time Records</div>';
-            h += '<div class="alltime-grid">';
-            h += alltimeCardWithDesc('🏆 Championships', 'Total league championships won', alltime.championships, function(m){return m.championships});
-            if (alltime.championship_appearances) {
-                h += alltimeCardWithDesc('🏅 Championship Appearances', 'Times reaching the championship game', alltime.championship_appearances, function(m){return m.championship_appearances});
-            }
-            h += alltimeCardWithDesc('🎟️ Playoff Appearances', 'Seasons qualifying for the playoffs', alltime.playoff_appearances, function(m){return m.playoff_appearances});
-            h += alltimeCardWithDesc('📊 Best Overall Record', 'Cumulative win-loss record across all games', alltime.overall_record, function(m){return m.total_wins+'-'+m.total_losses+' ('+(m.win_pct*100).toFixed(1)+'%)'});
-            h += alltimeCardWithDesc('📈 Best Reg Season Record', 'Cumulative regular season win-loss record', alltime.reg_season_record, function(m){return m.reg_wins+'-'+m.reg_losses+' ('+(m.reg_win_pct*100).toFixed(1)+'%)'});
-            h += alltimeCardWithDesc('🏅 Best Playoff Record', 'Cumulative playoff game win-loss record', alltime.playoff_record, function(m){return m.playoff_wins+'-'+m.playoff_losses});
-            h += alltimeCardWithSubDesc('🏆 Best Avg Finish', 'Average final standing position (lower is better)', alltime.avg_finishing_position, function(m){return m.avg_finishing_position.toFixed(2)}, function(m){return m.seasons_played + ' seasons'});
-            if (alltime.best_avg_draft_score && alltime.best_avg_draft_score.length > 0) {
-                h += alltimeCardWithSubDesc('🎯 Best Avg Draft Score', 'Highest average FDS+ draft grade', alltime.best_avg_draft_score, function(m){return m.avg_draft_score.toFixed(1)}, function(m){return m.drafts_evaluated + ' drafts'});
-            }
-            if (alltime.most_top_drafts && alltime.most_top_drafts.length > 0) {
-                h += alltimeCardWithDesc('📈 Most Top Drafts', 'Most #1 ranked drafts in a season', alltime.most_top_drafts, function(m){return m.top_drafts});
-            }
-            if (alltime.most_worst_drafts && alltime.most_worst_drafts.length > 0) {
-                h += alltimeCardWithDesc('📉 Most Worst Drafts', 'Most last-place drafts in a season', alltime.most_worst_drafts, function(m){return m.worst_drafts}, true);
-            }
-            h += alltimeCardWithDesc('💰 Most Career Pts', 'Total fantasy points scored all-time', alltime.total_points, function(m){return m.total_points.toFixed(1)});
-            h += alltimeCardWithDesc('🎯 Most Career Pts Against', 'Total points scored by opponents all-time', alltime.most_points_against, function(m){return m.total_points_against.toFixed(1)}, true);
-            h += alltimeCardWithDesc('💰 Most Reg Season Pts', 'Total regular season points scored', alltime.reg_points, function(m){return m.reg_points.toFixed(1)});
-            h += alltimeCardWithDesc('🎯 Most Reg Season Pts Against', 'Total regular season points allowed', alltime.reg_points_against, function(m){return m.reg_points_against.toFixed(1)}, true);
-            if (alltime.postseason_points) {
-                h += alltimeCardWithDesc('🏆 Most Postseason Pts', 'Total postseason points scored', alltime.postseason_points, function(m){return m.postseason_points.toFixed(1)});
-            }
-            if (alltime.postseason_points_against) {
-                h += alltimeCardWithDesc('🎯 Most Postseason Pts Against', 'Total postseason points allowed', alltime.postseason_points_against, function(m){return m.postseason_points_against.toFixed(1)}, true);
-            }
-            h += alltimeCardWithDesc('🎯 Best Avg Accuracy', 'Highest career lineup decision accuracy', alltime.avg_accuracy, function(m){return m.avg_accuracy.toFixed(1)+'%'});
-            h += alltimeCardWithDesc('✅ Fewest Games Lost', 'Fewest games lost due to lineup mistakes', alltime.fewest_games_lost, function(m){return m.games_lost});
-            h += alltimeCardWithDesc('🍺 Most Chugs', 'Most career starter slots with 0 points', alltime.most_chugs, function(m){return m.total_chugs}, true);
-            h += '</div>';
-            
+            h += renderAllTimeTable(alltime);
+
             document.getElementById('main').innerHTML = h;
-            
+            wireAllTimeTable();
+
             // Add filter event listeners
             setTimeout(function() {
                 var managerFilter = document.getElementById('managerFilter');
@@ -728,9 +1009,10 @@
                     rows.forEach(function(row) {
                         var managers = row.getAttribute('data-managers') || '';
                         var recordYear = row.getAttribute('data-year') || '';
-                        
+
                         var managerMatch = !selectedManager || managers.indexOf(selectedManager) !== -1;
-                        var yearMatch = !selectedYear || recordYear === selectedYear;
+                        // Career rows carry no year, so a year filter shouldn't dim them.
+                        var yearMatch = !selectedYear || !recordYear || recordYear === selectedYear;
                         
                         // Determine highlighting - if both filters set, both must match for highlight
                         var shouldHighlight = false;
@@ -773,8 +1055,227 @@
             }, 0);
         }
         
+        /* ===================== ALL-TIME RECORDS (sortable) =====================
+           One row per manager, one column per stat. Click any header to sort by it;
+           click again to flip the direction. Each column starts on the direction that
+           puts the "best" manager on top, so Chugs and Avg Finish open ascending.
+         */
+        var ALLTIME_COLUMNS = [
+            {key:'name',                    label:'Manager',      type:'text', tip:'Manager name'},
+            {key:'seasons_played',          label:'Szns',         best:'high', tip:'Seasons played'},
+            {key:'championships',           label:'🏆 Titles',    best:'high', tip:'League championships won'},
+            {key:'championship_appearances',label:'🏅 Ch. Apps',  best:'high', tip:'Championship game appearances'},
+            {key:'playoff_appearances',     label:'🎟️ Playoffs',  best:'high', tip:'Seasons qualifying for the playoffs'},
+            {key:'win_pct',                 label:'Overall',      best:'high', tip:'All games: regular season plus every postseason game',
+             fmt:function(m){ return m.total_wins + '-' + m.total_losses; }},
+            {key:'win_pct2', sortKey:'win_pct', label:'Win %',    best:'high', tip:'Overall win percentage',
+             get:function(m){ return m.win_pct; }, fmt:function(m){ return (m.win_pct*100).toFixed(1) + '%'; }},
+            {key:'reg_win_pct',             label:'Reg. Season',  best:'high', tip:'Regular season record',
+             fmt:function(m){ return m.reg_wins + '-' + m.reg_losses; }},
+            {key:'reg_win_pct2', sortKey:'reg_win_pct', label:'Reg. Win %', best:'high', tip:'Regular season win percentage',
+             get:function(m){ return m.reg_win_pct; }, fmt:function(m){ return (m.reg_win_pct*100).toFixed(1) + '%'; }},
+            {key:'playoff_win_pct',         label:'Playoffs W-L', best:'high', tip:'Championship bracket games only (consolation games excluded)',
+             fmt:function(m){ return m.playoff_wins + '-' + m.playoff_losses; }},
+            {key:'avg_finishing_position',  label:'Avg Finish',   best:'low',  tip:'Average final standing — lower is better',
+             fmt:function(m){ return m.avg_finishing_position.toFixed(2); }},
+            {key:'total_points',            label:'Career PF',    best:'high', tip:'Total points scored, all games',
+             fmt:function(m){ return m.total_points.toFixed(1); }},
+            {key:'total_points_against',    label:'Career PA',    best:'low',  tip:'Total points allowed, all games',
+             fmt:function(m){ return m.total_points_against.toFixed(1); }},
+            {key:'reg_points',              label:'Reg. PF',      best:'high', tip:'Regular season points scored',
+             fmt:function(m){ return m.reg_points.toFixed(1); }},
+            {key:'reg_points_against',      label:'Reg. PA',      best:'low',  tip:'Regular season points allowed',
+             fmt:function(m){ return m.reg_points_against.toFixed(1); }},
+            {key:'postseason_points',       label:'Post PF',      best:'high', tip:'Postseason points scored (both brackets, byes included)',
+             fmt:function(m){ return (m.postseason_points||0).toFixed(1); }},
+            {key:'postseason_points_against',label:'Post PA',     best:'low',  tip:'Postseason points allowed',
+             fmt:function(m){ return (m.postseason_points_against||0).toFixed(1); }},
+            {key:'avg_accuracy',            label:'Acc %',        best:'high', tip:'Career lineup accuracy — share of correct start/sit calls',
+             fmt:function(m){ return m.avg_accuracy.toFixed(1) + '%'; }},
+            {key:'games_lost',              label:'Lost*',        best:'low',  tip:'Games lost that the optimal lineup would have won'},
+            {key:'total_chugs',             label:'🍺 Chugs',     best:'low',  tip:'Career started skill players (QB/RB/WR/TE/FLEX) who scored 0 or fewer points'},
+            {key:'avg_draft_score',         label:'Avg FDS+',     best:'high', tip:'Average draft grade across all drafts',
+             fmt:function(m){ return (m.drafts_evaluated ? m.avg_draft_score.toFixed(1) : '—'); }},
+            {key:'top_drafts',              label:'📈 Best Drafts', best:'high', tip:'Times finishing with the league\'s #1 ranked draft'},
+            {key:'worst_drafts',            label:'📉 Worst Drafts', best:'low', tip:'Times finishing with the league\'s last ranked draft'}
+        ];
+
+        var alltimeSort = {key: 'championships', dir: -1};
+        var alltimeRows = [];
+
+        function colValue(col, m) {
+            if (col.get) return col.get(m);
+            var v = m[col.sortKey || col.key];
+            return v == null ? (col.type === 'text' ? '' : 0) : v;
+        }
+
+        function renderAllTimeTable(alltime) {
+            // Every all_time list holds the same manager objects, so any one of them
+            // gives the full roster of managers.
+            var source = alltime.championships || alltime.overall_record || [];
+            alltimeRows = source.slice();
+
+            var h = '<div class="section-title" style="border-color:var(--accent);margin-top:2rem">👑 All-Time Records</div>';
+            h += '<div class="card"><div class="card-body sort-table-wrap" style="padding:0">';
+            h += '<table class="sortable" id="alltimeTable"><thead><tr>';
+            ALLTIME_COLUMNS.forEach(function(c, i) {
+                h += '<th data-col="' + i + '" title="' + esc(c.tip || c.label) + '">' + c.label + '<span class="arrow">↕</span></th>';
+            });
+            h += '</tr></thead><tbody id="alltimeBody"></tbody></table>';
+            h += '</div></div>';
+            h += '<div class="table-note">Click any column heading to sort; click it again to reverse. '
+               + 'Gold marks the league leader in that column. Overall and Career PF/PA cover every game played — '
+               + 'regular season, playoff bracket and consolation bracket. Playoffs W-L is the championship bracket only.</div>';
+            return h;
+        }
+
+        function wireAllTimeTable() {
+            var table = document.getElementById('alltimeTable');
+            if (!table) return;
+            table.querySelectorAll('th').forEach(function(th) {
+                th.onclick = function() {
+                    var col = ALLTIME_COLUMNS[parseInt(th.dataset.col)];
+                    var key = col.key;
+                    if (alltimeSort.key === key) {
+                        alltimeSort.dir = -alltimeSort.dir;
+                    } else {
+                        alltimeSort.key = key;
+                        // Open each column on the direction that surfaces the best value.
+                        alltimeSort.dir = col.type === 'text' ? 1 : (col.best === 'low' ? 1 : -1);
+                    }
+                    paintAllTimeTable();
+                };
+            });
+            paintAllTimeTable();
+        }
+
+        function paintAllTimeTable() {
+            var body = document.getElementById('alltimeBody');
+            if (!body) return;
+
+            var col = ALLTIME_COLUMNS.filter(function(c){ return c.key === alltimeSort.key; })[0] || ALLTIME_COLUMNS[2];
+            var rows = alltimeRows.slice().sort(function(a, b) {
+                var va = colValue(col, a), vb = colValue(col, b);
+                var cmp = (col.type === 'text') ? String(va).localeCompare(String(vb)) : (va - vb);
+                // Alphabetical by manager as a stable tiebreak.
+                return cmp * alltimeSort.dir || a.name.localeCompare(b.name);
+            });
+
+            // Best value per column, so the leader can be highlighted.
+            var leaders = {};
+            ALLTIME_COLUMNS.forEach(function(c) {
+                if (c.type === 'text' || !c.best) return;
+                var vals = alltimeRows.map(function(m){ return colValue(c, m); })
+                                      .filter(function(v){ return typeof v === 'number' && !isNaN(v); });
+                if (!vals.length) return;
+                var best = c.best === 'low' ? Math.min.apply(null, vals) : Math.max.apply(null, vals);
+                // Skip the highlight when half the league or more shares the top value
+                // (Seasons Played, Worst Drafts) - gold on every row says nothing.
+                var ties = vals.filter(function(v){ return v === best; }).length;
+                if (ties * 2 >= vals.length) return;
+                leaders[c.key] = best;
+            });
+
+            var h = '';
+            rows.forEach(function(m) {
+                h += '<tr class="record-row-item" data-managers="' + esc(m.name) + '">';
+                ALLTIME_COLUMNS.forEach(function(c) {
+                    if (c.type === 'text') {
+                        h += '<td class="mgr manager-name">' + esc(m.name) + '</td>';
+                        return;
+                    }
+                    var raw = colValue(c, m);
+                    var text = c.fmt ? c.fmt(m) : raw;
+                    var isLeader = leaders[c.key] != null && raw === leaders[c.key];
+                    h += '<td class="' + (isLeader ? 'lead' : '') + '">' + text + '</td>';
+                });
+                h += '</tr>';
+            });
+            body.innerHTML = h;
+
+            document.querySelectorAll('#alltimeTable th').forEach(function(th) {
+                var c = ALLTIME_COLUMNS[parseInt(th.dataset.col)];
+                var on = c.key === alltimeSort.key;
+                th.classList.toggle('sorted', on);
+                th.querySelector('.arrow').textContent = on ? (alltimeSort.dir === 1 ? '↑' : '↓') : '↕';
+            });
+        }
+
         // Global variable for selected biography manager
         var bioManager = null;
+
+        /*
+         * Trophy Case - one banner per accomplishment.
+         * Uses biographies[x].trophy_case when the JSON has it, and otherwise rebuilds
+         * the same thing from the season data so an older JSON still renders.
+         */
+        function trophyCaseFor(bio) {
+            if (bio.trophy_case) return bio.trophy_case;
+
+            var tc = {championships: [], division_titles: [], runner_ups: []};
+            seasonList().forEach(function(e) {
+                var s = e.season;
+                var complete = s.season_status && s.season_status.is_complete;
+
+                teamsOf(s).forEach(function(t) {
+                    if (t.display_name === bio.name && complete && t.final_standing === 1) {
+                        tc.championships.push({year: e.year, record: t.wins + '-' + t.losses, team_name: t.name || ''});
+                    }
+                });
+
+                (s.division_winners || []).forEach(function(w) {
+                    if (w.manager === bio.name) {
+                        tc.division_titles.push({year: e.year, division: w.division_name, record: w.wins + '-' + w.losses});
+                    }
+                });
+
+                var rounds = (s.brackets && s.brackets.championship && s.brackets.championship.rounds) || {};
+                var keys = Object.keys(rounds);
+                if (!keys.length) return;
+                var final = rounds[keys.sort(function(a,b){return b-a;})[0]][0];
+                if (!final || !final.home || !final.away) return;
+                var loser = final.winner_id === final.home.team_id ? final.away : final.home;
+                if (loser.display_name !== bio.name) return;
+                var t = s.teams[loser.team_id];
+                tc.runner_ups.push({year: e.year, record: t ? t.wins + '-' + t.losses : '', team_name: t ? (t.name || '') : ''});
+            });
+            return tc;
+        }
+
+        function renderTrophyCase(bio) {
+            var tc = trophyCaseFor(bio);
+            var count = tc.championships.length + tc.division_titles.length + tc.runner_ups.length;
+
+            var h = '<div class="section-title" style="border-color:var(--gold)">🏆 Trophy Case'
+                  + '<span style="font-size:0.8rem;font-weight:400;color:var(--text3);text-transform:none;margin-left:0.5rem">'
+                  + count + (count === 1 ? ' banner' : ' banners') + '</span></div>';
+            h += '<div class="card" style="margin-bottom:1.5rem"><div class="card-body">';
+
+            if (!count) {
+                h += '<div class="trophy-empty">No banners yet — no championships, division titles or championship game appearances.</div>';
+                return h + '</div></div>';
+            }
+
+            h += '<div class="trophy-case">';
+            tc.championships.forEach(function(x) {
+                h += '<div class="trophy title"><div class="trophy-kind">🏆 League Champion</div>'
+                   + '<div class="trophy-year">' + x.year + '</div>'
+                   + '<div class="trophy-sub">' + (x.team_name ? '“' + esc(x.team_name) + '” · ' : '') + esc(x.record) + '</div></div>';
+            });
+            tc.division_titles.forEach(function(x) {
+                h += '<div class="trophy division"><div class="trophy-kind">🥇 ' + esc(x.division) + ' Division</div>'
+                   + '<div class="trophy-year">' + x.year + '</div>'
+                   + '<div class="trophy-sub">' + esc(x.record) + ' regular season</div></div>';
+            });
+            tc.runner_ups.forEach(function(x) {
+                h += '<div class="trophy runner"><div class="trophy-kind">🥈 Runner-Up</div>'
+                   + '<div class="trophy-year">' + x.year + '</div>'
+                   + '<div class="trophy-sub">Lost the championship game' + (x.record ? ' · ' + esc(x.record) : '') + '</div></div>';
+            });
+            h += '</div>';
+
+            return h + '</div></div>';
+        }
         
         function renderBiography() {
             var bios = data.biographies;
@@ -830,7 +1331,10 @@
             h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Avg Finish</div>';
             h += '</div>';
             h += '</div></div></div></div>';
-            
+
+            // Trophy Case - titles, division wins and championship game losses
+            h += renderTrophyCase(bio);
+
             // Records Section
             h += '<div class="section-title" style="border-color:var(--accent)">📊 Career Records</div>';
             h += '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem">';
@@ -854,17 +1358,19 @@
             h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Postseason Record</div>';
             h += '<div style="font-family:Oswald;font-size:1.5rem">' + bio.playoff_wins + '-' + bio.playoff_losses + '</div>';
             h += '<div style="font-size:0.85rem;color:var(--text2)">' + bio.playoff_win_pct + '% Win Rate</div>';
+            h += '<div style="font-size:0.7rem;color:var(--text3)">Playoff + consolation brackets</div>';
             h += '</div></div>';
             
             // Total Points For
             h += '<div class="card"><div class="card-body" style="text-align:center">';
             h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Career Points For</div>';
-            // Calculate total games for per-week average
-            var totalGames = bio.total_wins + bio.total_losses;
-            
+            // Weeks a score was posted. Playoff byes score points but are neither a win
+            // nor a loss, so weeks_played - not the W+L total - is the right denominator.
+            var totalGames = bio.weeks_played || (bio.total_wins + bio.total_losses);
+
             h += '<div style="font-family:Oswald;font-size:1.5rem;color:var(--accent)">' + bio.total_points.toFixed(1) + '</div>';
             h += '<div style="font-size:0.8rem;color:var(--text2)">' + (bio.total_points / bio.years_in_league).toFixed(1) + ' pts/season</div>';
-            h += '<div style="font-size:0.75rem;color:var(--text3)">' + (totalGames > 0 ? (bio.total_points / totalGames).toFixed(1) : '0') + ' pts/game</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3)">' + (totalGames > 0 ? (bio.total_points / totalGames).toFixed(1) : '0') + ' pts/week</div>';
             h += '</div></div>';
             
             // Total Points Against
@@ -872,7 +1378,7 @@
             h += '<div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase">Career Points Against</div>';
             h += '<div style="font-family:Oswald;font-size:1.5rem;color:var(--danger)">' + (bio.total_points_against || 0).toFixed(1) + '</div>';
             h += '<div style="font-size:0.8rem;color:var(--text2)">' + ((bio.total_points_against || 0) / bio.years_in_league).toFixed(1) + ' pts/season</div>';
-            h += '<div style="font-size:0.75rem;color:var(--text3)">' + (totalGames > 0 ? ((bio.total_points_against || 0) / totalGames).toFixed(1) : '0') + ' pts/game</div>';
+            h += '<div style="font-size:0.75rem;color:var(--text3)">' + (totalGames > 0 ? ((bio.total_points_against || 0) / totalGames).toFixed(1) : '0') + ' pts/week</div>';
             h += '</div></div>';
             
             // Easiest Opponent
@@ -1301,7 +1807,14 @@
                 // Add year selector event after render
                 setTimeout(function() {
                     var sel = document.getElementById('tradeYearSelect');
-                    if (sel) sel.onchange = function() { year = this.value; renderTrades(); };
+                    if (sel) sel.onchange = function() {
+                    // Keep the shared year in sync so the Seasons tab doesn't jump.
+                    year = parseInt(this.value);
+                    var ys = document.getElementById('yearSelect');
+                    if (ys) ys.value = year;
+                    loadTeams();
+                    renderTrades();
+                };
                 }, 0);
                 return;
             }
@@ -1416,7 +1929,14 @@
             // Add year selector event after render
             setTimeout(function() {
                 var sel = document.getElementById('tradeYearSelect');
-                if (sel) sel.onchange = function() { year = this.value; renderTrades(); };
+                if (sel) sel.onchange = function() {
+                    // Keep the shared year in sync so the Seasons tab doesn't jump.
+                    year = parseInt(this.value);
+                    var ys = document.getElementById('yearSelect');
+                    if (ys) ys.value = year;
+                    loadTeams();
+                    renderTrades();
+                };
             }, 0);
         }
         
